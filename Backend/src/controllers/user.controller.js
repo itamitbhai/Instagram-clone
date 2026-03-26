@@ -70,8 +70,42 @@ async function unfollowUserController(req, res){
         message: `You have unFollowed ${followeeUsername}`
     })
 }
+
+
+async function respondToFollowController(req, res) {
+
+    const followeeUsername = req.user.username   // jisne request receive ki
+    const followerUsername = req.params.username
+    const { action } = req.body   // "accepted" or "rejected"
+
+    const follow = await followModel.findOne({
+        follower: followerUsername,
+        followee: followeeUsername
+    })
+
+    if (!follow) {
+        return res.status(404).json({
+            message: "Follow request not found"
+        })
+    }
+
+    if (action !== "accepted" && action !== "rejected") {
+        return res.status(400).json({
+            message: "Invalid action"
+        })
+    }
+
+    follow.status = action
+    await follow.save()
+
+    res.status(200).json({
+        message: `Follow request ${action}`,
+        follow
+    })
+}
  
 module.exports = {
     followUserController,
-    unfollowUserController
+    unfollowUserController,
+    respondToFollowController
 }
