@@ -12,17 +12,25 @@ const identifyUser = require("../middleware/auth.middleware")
 postRouter.post("/", upload.single("image"), identifyUser , postController.createPostController)
 
 /**
- * GET /api/posts/ [protected]
+ * @routes GET /api/posts/ [protected]
  */
 postRouter.get("/",identifyUser, postController.getPostController)
 
 /**
- * GET /api/posts/details/:postid
- * -return an detail about specific post with the id. also 
+ * @routes GET /api/posts/details/:postid
+ *@description  -return an detail about specific post with the id. also 
  * check whether the post belongs to the user that the request come from 
  * 
  */
 
 postRouter.get("/details/:postId",identifyUser, postController.getPostController)
+
+/**
+ * @routes POST /api/posts/like/:postid
+ * @description like a post with the id provided in the request params 
+ */
+
+postRouter.post("/like/:postId", identifyUser, postController.likePostController)
+
 
 module.exports = postRouter
