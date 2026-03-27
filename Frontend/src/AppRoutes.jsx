@@ -6,6 +6,7 @@ function AppRoutes(){
     return(
         <BrowserRouter>
             <Routes>
+                <Route path='/' element={<h1>welcome to instagram</h1>}/>
                 <Route path='/login' element={<Login/>}/>
                 <Route path='/register' element={<Register/>}/>
             </Routes>

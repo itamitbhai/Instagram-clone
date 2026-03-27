@@ -12,24 +12,19 @@ main {
   min-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 .form-container form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-.form-container form input, .form-container form button {
+.form-container form input {
   border: none;
   outline: none;
   padding-inline: 1.5rem;
   padding-block: 1rem;
   border-radius: 1rem;
-}
-.form-container form button {
-  background-color: rgb(216, 27, 27);
-  color: whitesmoke;
-  cursor: pointer;
 }
 .form-container .toggleAuthForm {
   color: #bd0c23;
