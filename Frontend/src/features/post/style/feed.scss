@@ -9,6 +9,13 @@
 
         .posts{
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .posts{
+            width: 100%;
         }
 
         .post{
@@ -46,6 +53,10 @@
                 .left{
                     display: flex;
                     gap: 0.5rem;
+                }
+                .Like{
+                    color:red;
+
                 }
                 svg{
                     width: 1rem;
