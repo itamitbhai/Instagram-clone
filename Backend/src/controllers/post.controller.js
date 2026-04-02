@@ -83,7 +83,7 @@ async function getPostDetailsController(req, res) {
 }
 
 async function likePostController(req, res) {
-    const username = req.user.username
+    const userId = req.user.Id
     const postId = req.params.postId
 
     const post = await postModel.findById(postId)
@@ -96,7 +96,7 @@ async function likePostController(req, res) {
 
     const like = await likeModel.create({
         post: postId,
-        user: username
+        user: userId
     })
 
     res.status(201).json({
@@ -106,9 +106,14 @@ async function likePostController(req, res) {
 
 }
 
+async function unLikePostController(req, res) {
+}
+
 async function getFeedController(req, res) {
     const user = req.user
-    const posts = await Promise.all((await postModel.find().populate("user").lean())
+
+
+    const posts = await Promise.all((await postModel.find({}).sort({_id: -1}).populate("user").lean())
        .map(async (post) => {
 
         /**
@@ -136,5 +141,6 @@ module.exports = {
     getPostController,
     getPostDetailsController,
     likePostController,
-    getFeedController
+    getFeedController,
+    unLikePostController
 }
