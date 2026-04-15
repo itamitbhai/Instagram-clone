@@ -1,7 +1,41 @@
-.nav-bar{
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding-inline: 1rem;
-    padding-block: 0.5rem;
+.nav-bar {
+  position: fixed;   /* 🔥 IMPORTANT */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 20px;
+
+  background: rgba(20, 20, 20, 0.8);   /* glass effect */
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Logo */
+.nav-bar p {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+/* Button */
+.nav-bar .primary-button {
+  background: linear-gradient(45deg, #ff4d4d, #ff0066);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.nav-bar .primary-button:hover {
+  transform: scale(1.05);
 }

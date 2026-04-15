@@ -1,80 +1,215 @@
-.feed-page{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+// .feed-page{
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+//     align-items: center;
 
-    .feed{
-        max-width: 300px;
-        width: 100%;
+//     .feed{
+//         max-width: 300px;
+//         width: 100%;
 
-        .posts{
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 0.1rem;
-        }
+//         .posts{
+//             width: 100%;
+//             display: flex;
+//             flex-direction: column;
+//             gap: 0.1rem;
+//         }
 
-        .posts{
-            width: 100%;
-        }
+//         .posts{
+//             width: 100%;
+//         }
 
-        .post{
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            background-color: #312626;
-            padding-inline: 0.5rem;
-            padding-block: 0.5rem;
+//         .post{
+//             width: 100%;
+//             display: flex;
+//             flex-direction: column;
+//             gap: 0.5rem;
+//             background-color: #312626;
+//             padding-inline: 0.5rem;
+//             padding-block: 0.5rem;
 
-            .user{
-                display: flex;
-                gap: 0.5rem;
-                align-items: center;
+//             .user{
+//                 display: flex;
+//                 gap: 0.5rem;
+//                 align-items: center;
 
-                .img-wrapper{
-                border-radius: 50%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                border: 2px solid rgba(255, 0, 0, 0);
-                background: conic-gradient(from 45deg, rgb(255, 102, 0), rgb(105, 0, 128), rgb(251, 8, 8));
-            }
-                img{
-                    width: 2rem;
-                    aspect-ratio: 1/1;
-                    border-radius: 50%;
-                }
-            }
+//                 .img-wrapper{
+//                 border-radius: 50%;
+//                 display: flex;
+//                 justify-content: center;
+//                 align-items: center;
+//                 border: 2px solid rgba(255, 0, 0, 0);
+//                 background: conic-gradient(from 45deg, rgb(255, 102, 0), rgb(105, 0, 128), rgb(251, 8, 8));
+//             }
+//                 img{
+//                     width: 2rem;
+//                     aspect-ratio: 1/1;
+//                     border-radius: 50%;
+//                 }
+//             }
 
-            .icons{
-                display: flex;
-                justify-content: space-between;
-                .left{
-                    display: flex;
-                    gap: 0.5rem;
-                }
-                .Like{
-                    color:red;
+//             .icons{
+//                 display: flex;
+//                 justify-content: space-between;
+//                 .left{
+//                     display: flex;
+//                     gap: 0.5rem;
+//                 }
+//                 .Like{
+//                     color:red;
 
-                }
-                svg{
-                    width: 1rem;
-                    aspect-ratio: 1/1;
-                    color: white;
-                }
-                button{
-                 background-color: transparent;
-                border: none;
-                outline: none;
+//                 }
+//                 svg{
+//                     width: 1rem;
+//                     aspect-ratio: 1/1;
+//                     color: white;
+//                 }
+//                 .Like svg {
+//                   color: #aaa;
+//                   transition: 0.2s;
+//                   cursor: pointer;
+//                 }
 
-                }
-            }
+//                 .Like svg.like {
+//                   color: red;
+//                    transform: scale(1.2);
+//                 }
+//                 button{
+//                  background-color: transparent;
+//                 border: none;
+//                 outline: none;
+
+//                 }
+//             }
         
-            img{
-                width: 100%;
-            }
+//             img{
+//                 width: 100%;
+//             }
+//         }
+//     } 
+// }
+
+
+
+.feed-page {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
+  background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
+  min-height: 100vh;
+  overflow-x: hidden;
+
+  .feed {
+    max-width: 420px;
+    width: 100%;
+
+    .posts {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .post {
+      background: rgba(30, 30, 30, 0.9);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      box-shadow: 
+        0 10px 30px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-6px) scale(1.01);
+      }
+
+      /* 👤 USER */
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 12px;
+
+        .img-wrapper {
+          padding: 2px;
+          border-radius: 50%;
+          background: linear-gradient(45deg, #ff6a00, #ff00cc);
+
+          img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #111;
+          }
         }
-    } 
+
+        p {
+          font-weight: 600;
+          font-size: 15px;
+          color: #fff;
+        }
+      }
+
+      /* 📸 IMAGE */
+      img {
+        width: 100%;
+        height: 450px;
+        object-fit: cover;
+        transition: 0.3s;
+      }
+
+      /* ❤️ ICONS */
+      .icons {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px;
+
+        .left {
+          display: flex;
+          gap: 15px;
+        }
+
+        button {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+        }
+
+        svg {
+          width: 24px;
+          height: 24px;
+          color: #bbb;
+          transition: all 0.2s ease;
+        }
+
+        svg:hover {
+          transform: scale(1.2);
+          color: white;
+        }
+
+        /* ❤️ LIKE ANIMATION */
+        .Like svg.like {
+          color: #ff3040;
+          animation: pop 0.3s ease;
+        }
+
+        @keyframes pop {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.4); }
+          100% { transform: scale(1.2); }
+        }
+      }
+
+      /* ✍️ CAPTION */
+      .bottom {
+        padding: 0 14px 14px;
+
+        .caption {
+          color: #ddd;
+          font-size: 14px;
+          line-height: 1.4;
+        }
+      }
+    }
+  }
 }

@@ -1,0 +1,8 @@
+.Like svg {
+  color: gray;
+  transition: 0.2s;
+}
+
+.Like svg.like {
+  color: red;   /* ❤️ red when liked */
+}

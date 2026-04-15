@@ -82,31 +82,154 @@ async function getPostDetailsController(req, res) {
 
 }
 
+// async function likePostController(req, res) {
+//     const username= req.user?.username
+//     const postId = req.params.postId
+
+//     const post = await postModel.findById(postId)
+
+//     if(!post) {
+//         return res.status(404).json({
+//             message: "Post not Found"
+//         })
+//     }
+
+//       const existingLike = await likeModel.findOne({
+//       post: postId,
+//       user: username
+//     })
+
+//     if (existingLike) {
+//       return res.status(400).json({
+//         message: "Already liked"
+//       })
+//     }
+
+//     const like = await likeModel.create({
+//         post: postId,
+//         user: username
+//     })
+
+//     res.status(201).json({
+//         message: "Post liked Succesfully",
+//         like
+//     })
+
+    
+
+// }
 async function likePostController(req, res) {
-    const userId = req.user.Id
-    const postId = req.params.postId
+    try {
+        const username = req.user?.username;
+        const postId = req.params.postId;
 
-    const post = await postModel.findById(postId)
+        console.log("USER:", req.user);
+        console.log("POST ID:", postId);
 
-    if(!post) {
-        return res.status(404).json({
-            message: "Post not Found"
-        })
+        if (!username) {
+            return res.status(401).json({
+                message: "User not authenticated"
+            });
+        }
+
+        if (!postId) {
+            return res.status(400).json({
+                message: "Post ID missing"
+            });
+        }
+
+        const post = await postModel.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not Found"
+            });
+        }
+
+        const existingLike = await likeModel.findOne({
+            post: postId,
+            user: username
+        });
+
+        if (existingLike) {
+            return res.status(400).json({
+                message: "Already liked"
+            });
+        }
+
+        const like = await likeModel.create({
+            post: postId,
+            user: username
+        });
+
+        res.status(201).json({
+            message: "Post liked successfully",
+            like
+        });
+
+    } catch (error) {
+        console.log("LIKE ERROR:", error);  // 🔥 THIS WILL SHOW REAL ISSUE
+        res.status(500).json({
+            message: error.message
+        });
     }
-
-    const like = await likeModel.create({
-        post: postId,
-        user: userId
-    })
-
-    res.status(201).json({
-        message: "Post liked Succesfully",
-        like
-    })
-
 }
 
+
 async function unLikePostController(req, res) {
+    try {
+        const username = req.user?.username;
+        const postId = req.params.postId;
+
+        // 🔒 Auth check
+        if (!username) {
+            return res.status(401).json({
+                message: "User not authenticated"
+            });
+        }
+
+        if (!postId) {
+            return res.status(400).json({
+                message: "Post ID missing"
+            });
+        }
+
+        // 🔍 Check post exists
+        const post = await postModel.findById(postId);
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not found"
+            });
+        }
+
+        // 🔍 Find like
+        const existingLike = await likeModel.findOne({
+            post: postId,
+            user: username
+        });
+
+        if (!existingLike) {
+            return res.status(400).json({
+                message: "You have not liked this post"
+            });
+        }
+
+        // ❌ Delete like
+        await likeModel.deleteOne({
+            post: postId,
+            user: username
+        });
+
+        res.status(200).json({
+            message: "Post unliked successfully"
+        });
+
+    } catch (error) {
+        console.log("UNLIKE ERROR:", error);
+        res.status(500).json({
+            message: error.message
+        });
+    }
 }
 
 async function getFeedController(req, res) {

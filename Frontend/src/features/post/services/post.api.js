@@ -25,6 +25,8 @@ export async function createPost(imageFile, caption) {
 }
 
 export async function likePost(postId) {
+    console.log("POST ID:", postId)  
+
     const response = await api.post("/api/posts/like/" + postId)
     return response.data
 }

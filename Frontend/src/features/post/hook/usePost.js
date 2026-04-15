@@ -22,18 +22,28 @@ export const usePost = () => {
         setLoading(false)
     }
 
-    const handleLike = async (post) => {
+    // const handleLike = async (post) => {
 
-        const data = await likePost(post)
-        await handleGetFeed()
+    //     const data = await likePost(post._id)
+    //     await handleGetFeed()
 
-    }
-    const handleUnLike = async (post) => {
+    // }
+    // const handleUnLike = async (post) => {
 
-        const data = await unLikePost(post)
-        await handleGetFeed()
+    //     const data = await unLikePost(post._id)
+    //     await handleGetFeed()
 
-    }
+    // }
+
+    const handleLike = async (postId) => {
+    await likePost(postId)
+    await handleGetFeed()
+}
+
+const handleUnLike = async (postId) => {
+    await unLikePost(postId)
+    await handleGetFeed()
+}
 
     useEffect(() => {
         handleGetFeed()
