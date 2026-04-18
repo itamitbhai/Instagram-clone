@@ -11,6 +11,14 @@ const identifyUser = require("../middleware/auth.middleware")
 
 postRouter.post("/", upload.single("image"), identifyUser , postController.createPostController)
 
+
+/**
+ * 
+ * Delete /api/postId
+ * -req.body = delete
+ */
+
+postRouter.delete("/:postId", identifyUser, postController.deletePostController)
 /**
  * @routes GET /api/posts/ [protected]
  */

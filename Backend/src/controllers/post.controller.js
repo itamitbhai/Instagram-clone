@@ -33,6 +33,40 @@ res.status(201).json({
 })
 }
 
+// Delete Post Controller
+async function deletePostController(req, res) {
+  try {
+    const post = await postModel.findById(req.params.postId);
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found"
+      });
+    }
+
+    if (post.user.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Unauthorized"
+      });
+    }
+
+    // Delete image from ImageKit
+    if (post.fileId) {
+      await imagekit.files.deleteFile(post.fileId);
+    }
+
+    await post.deleteOne();
+
+    res.status(200).json({
+      message: "Post deleted successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+}
 
 
 async function getPostController(req, res) {
@@ -261,6 +295,7 @@ async function getFeedController(req, res) {
 
 module.exports = {
     createPostController,
+    deletePostController,
     getPostController,
     getPostDetailsController,
     likePostController,

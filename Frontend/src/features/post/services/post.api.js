@@ -24,6 +24,10 @@ export async function createPost(imageFile, caption) {
     return response.data
 }
 
+export async function deletePost(postId) {
+    const response = await api.delete("/api/posts/" + postId)
+    return response.data
+}
 export async function likePost(postId) {
     console.log("POST ID:", postId)  
 

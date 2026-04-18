@@ -9,6 +9,11 @@ const postSchema = new mongoose.Schema({
         type: String,
         require: [true, "imgUrl is required for creating an post"]
     },
+
+    fileId: {
+        type: String   // ImageKit delete ke liye
+    },
+
     user: {
         type:mongoose.Schema.Types.ObjectId,
         ref: "users",
