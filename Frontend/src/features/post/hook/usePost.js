@@ -1,45 +1,13 @@
-// import { getFeed, createPost, likePost, unLikePost } from "../services/post.api"
-// import { useContext, useEffect } from "react"
-// import { PostContext } from "../post.context"
+import { 
+    getFeed, 
+    createPost, 
+    likePost, 
+    unLikePost, 
+    deletePost,
+    addComment,
+    getComments
+} from "../services/post.api"
 
-// export const usePost = () => {
-
-//     const context = useContext(PostContext)
-
-//     const { loading, setLoading, post, setPost, feed, setFeed } = context
-
-//     const handleGetFeed = async () => {
-//         setLoading(true)
-//         const data = await getFeed()
-//         setFeed(data.posts.reverse())
-//         setLoading(false)
-//     }
-
-//     const handleCreatePost = async (imageFile, caption) => {
-//         setLoading(true)
-//         const data = await createPost(imageFile, caption)
-//         setFeed([ data.post, ...feed ])
-//         setLoading(false)
-//     }
-//     const handleLike = async (postId) => {
-//     await likePost(postId)
-//     await handleGetFeed()
-// }
-
-// const handleUnLike = async (postId) => {
-//     await unLikePost(postId)
-//     await handleGetFeed()
-// }
-
-//     useEffect(() => {
-//         handleGetFeed()
-//     }, [])
-
-//     return { loading, feed, post, handleGetFeed, handleCreatePost, handleLike, handleUnLike }
-
-// }
-
-import { getFeed, createPost, likePost, unLikePost, deletePost } from "../services/post.api"
 import { useContext, useEffect } from "react"
 import { PostContext } from "../post.context"
 
@@ -49,6 +17,7 @@ export const usePost = () => {
 
     const { loading, setLoading, post, setPost, feed, setFeed } = context
 
+    //  FEED
     const handleGetFeed = async () => {
         setLoading(true)
         const data = await getFeed()
@@ -56,6 +25,7 @@ export const usePost = () => {
         setLoading(false)
     }
 
+    //  CREATE POST
     const handleCreatePost = async (imageFile, caption) => {
         setLoading(true)
         const data = await createPost(imageFile, caption)
@@ -63,31 +33,50 @@ export const usePost = () => {
         setLoading(false)
     }
 
+    //  LIKE
     const handleLike = async (postId) => {
         await likePost(postId)
         await handleGetFeed()
     }
 
+    //  UNLIKE
     const handleUnLike = async (postId) => {
         await unLikePost(postId)
         await handleGetFeed()
     }
 
-    // 🔥 DELETE FUNCTION
+    //  DELETE
     const handleDeletePost = async (postId) => {
         try {
             setLoading(true)
-
             await deletePost(postId)
-
             setFeed(prev => prev.filter(post => post._id !== postId))
-
-            setLoading(false)
         } catch (error) {
             console.log(error)
+        } finally {
             setLoading(false)
         }
-        console.log("delete handle");
+    }
+
+    // 💬 ADD COMMENT
+    const handleAddComment = async (postId, text) => {
+        try {
+            const res = await addComment(postId, text)
+            return res.comment   // 👈 component ko return karo
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // 📥 GET COMMENTS
+    const handleGetComments = async (postId) => {
+        try {
+            const comments = await getComments(postId)
+            return comments
+        } catch (error) {
+            console.log(error)
+            return []
+        }
     }
 
     useEffect(() => {
@@ -102,6 +91,8 @@ export const usePost = () => {
         handleCreatePost, 
         handleLike, 
         handleUnLike,
-        handleDeletePost
-    }
+        handleDeletePost,
+        handleAddComment,     
+        handleGetComments     
+    }  
 }

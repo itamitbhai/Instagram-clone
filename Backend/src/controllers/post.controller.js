@@ -3,7 +3,7 @@ const Imagekit = require('@imagekit/nodejs')
 const { toFile } = require('@imagekit/nodejs');
 const jwt = require("jsonwebtoken");
 const likeModel = require("../models/like.model")
-
+const commentModel = require("../models/comment.model")
 
 
 
@@ -66,6 +66,7 @@ async function deletePostController(req, res) {
       message: error.message
     });
   }
+
 }
 
 
@@ -292,6 +293,87 @@ async function getFeedController(req, res) {
     })
 }
 
+async function addCommentController(req, res) {
+    try {
+        const username = req.user?.username;
+        const postId = req.params.postId;
+        const { text } = req.body;
+
+        console.log("USER:", req.user);
+        console.log("POST ID:", postId);
+        console.log("TEXT:", text);
+
+        if (!username) {
+            return res.status(401).json({
+                message: "User not authenticated"
+            });
+        }
+
+        if (!postId) {
+            return res.status(400).json({
+                message: "Post ID missing"
+            });
+        }
+
+        if (!text || text.trim() === "") {
+            return res.status(400).json({
+                message: "Comment cannot be empty"
+            });
+        }
+
+        const post = await postModel.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not found"
+            });
+        }
+
+        const comment = await commentModel.create({
+            post: postId,
+            user: username,
+            text
+        });
+
+        res.status(201).json({
+            message: "Comment added successfully",
+            comment
+        });
+
+    } catch (error) {
+        console.log("COMMENT ERROR:", error);
+        res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
+async function getCommentsController(req, res) {
+    try {
+        const postId = req.params.postId;
+
+        if (!postId) {
+            return res.status(400).json({
+                message: "Post ID missing"
+            });
+        }
+
+        const comments = await commentModel.find({
+            post: postId
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            comments
+        });
+
+    } catch (error) {
+        console.log("GET COMMENT ERROR:", error);
+        res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
 
 module.exports = {
     createPostController,
@@ -300,5 +382,7 @@ module.exports = {
     getPostDetailsController,
     likePostController,
     getFeedController,
-    unLikePostController
+    unLikePostController,
+    addCommentController,
+    getCommentsController
 }

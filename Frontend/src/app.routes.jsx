@@ -23,9 +23,6 @@ export const router = createBrowserRouter([
         path:'/create-post',
         element:<CreatePost/>
     },
-    {
-        path:'/delete-post',
-        element:<DeletePost/>
-    }
+
   
 ])

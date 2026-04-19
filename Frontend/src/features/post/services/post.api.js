@@ -39,3 +39,16 @@ export async function unLikePost(postId) {
     const response = await api.post("/api/posts/unlike/" + postId)
     return response.data
 }
+// 💬 ADD COMMENT
+export async function addComment(postId, text) {
+    const response = await api.post("/api/posts/comment/" + postId, {
+        text
+    })
+    return response.data
+}
+
+// 📥 GET COMMENTS
+export async function getComments(postId) {
+    const response = await api.get("/api/posts/comment/" + postId)
+    return response.data.comments
+}

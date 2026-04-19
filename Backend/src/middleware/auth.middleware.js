@@ -10,7 +10,8 @@ async function identifyUser(req, res, next) {
     }
     let decoded;
     try {
-        decoded = jwt.verify(token, process.env.JWT_SECRET)
+      decoded = jwt.verify(token, process.env.JWT_SECRET)
+      
 
     } catch (error) {
       return res.status(401).json({

@@ -2,7 +2,7 @@ const express = require("express")
 const postRouter = express.Router()
 const postController = require("../controllers/post.controller")
 const multer = require("multer")
-const upload = multer({Storage: multer.memoryStorage()})
+const upload = multer({storage: multer.memoryStorage()})
 const identifyUser = require("../middleware/auth.middleware")
 /**
  * post /api/posts [protected]
@@ -49,5 +49,19 @@ postRouter.post("/unlike/:postId", identifyUser, postController.unLikePostContro
  */
 
 postRouter.get("/feed", identifyUser, postController.getFeedController)
+
+/**
+ * @routes POST /api/posts/comment/:postId
+ * @description add comment to a post
+ * @access Private
+ */
+postRouter.post("/comment/:postId", identifyUser, postController.addCommentController)
+
+/**
+ * @routes GET /api/posts/comment/:postId
+ * @description get all comments of a post
+ * @access Private
+ */
+postRouter.get("/comment/:postId", identifyUser, postController.getCommentsController)
 
 module.exports = postRouter
