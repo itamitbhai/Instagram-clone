@@ -1,28 +1,34 @@
-import { createBrowserRouter } from "react-router"
-import Login from "./features/auth/pages/Login"
-import Register from "./features/auth/pages/Register"
-import Feed from "./features/post/pages/Feed"
-import CreatePost from "./features/post/pages/CreatePost"
-import DeletePost from "./features/post/pages/DeletePost"
+import { createBrowserRouter } from "react-router-dom";
 
+import Login from "./features/auth/pages/Login";
+import Register from "./features/auth/pages/Register";
+import Feed from "./features/post/pages/Feed";
+import CreatePost from "./features/post/pages/CreatePost";
+import MainLayout from "./features/post/layouts/MainLayout";
 
 export const router = createBrowserRouter([
-    {
-        path: "/login",
-        element: <Login />
-    },
-    {
-        path: '/register',
-        element: <Register />
-    },
-    {
-        path:'/',
-        element:<Feed/>
-    },
-    {
-        path:'/create-post',
-        element:<CreatePost/>
-    },
-
   
-])
+  {
+    path: "/login",
+    element: <Login />
+  },
+  {
+    path: "/register",
+    element: <Register />
+  },
+
+  {
+    element: <MainLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Feed />
+      },
+      {
+        path: "/create-post",
+        element: <CreatePost />
+      }
+    ]
+  }
+
+]);
