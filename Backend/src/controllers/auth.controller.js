@@ -116,7 +116,7 @@
             username: user.username,
         }, process.env.JWT_SECRET,
         {
-            expiresIn: "1d"
+            expiresIn: "7d"
         }
     )
     res.cookie("token", token)
