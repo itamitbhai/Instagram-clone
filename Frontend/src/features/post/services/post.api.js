@@ -25,6 +25,7 @@ export async function createPost(imageFile, caption) {
 }
 
 export async function deletePost(postId) {
+    console.log("DELETE API HIT:", postId)  // 👈 ADD THIS
     const response = await api.delete("/api/posts/" + postId)
     return response.data
 }
@@ -39,7 +40,7 @@ export async function unLikePost(postId) {
     const response = await api.post("/api/posts/unlike/" + postId)
     return response.data
 }
-// 💬 ADD COMMENT
+//  ADD COMMENT
 export async function addComment(postId, text) {
     const response = await api.post("/api/posts/comment/" + postId, {
         text
@@ -47,8 +48,20 @@ export async function addComment(postId, text) {
     return response.data
 }
 
-// 📥 GET COMMENTS
+//  GET COMMENTS
 export async function getComments(postId) {
     const response = await api.get("/api/posts/comment/" + postId)
     return response.data.comments
+}
+
+//  delete comment
+
+export async function deleteComment(commentId) {
+    const res = await api.delete("/api/posts/comment/" + commentId)
+    return res.data
+}
+
+export async function getUserProfile(username) {
+    const res = await api.get("/api/posts/user/" + username)
+    return res.data
 }

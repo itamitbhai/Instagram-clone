@@ -5,10 +5,11 @@ import {
     unLikePost, 
     deletePost,
     addComment,
-    getComments
+    getComments,
+    deleteComment
 } from "../services/post.api"
 
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import { PostContext } from "../post.context"
 
 export const usePost = () => {
@@ -21,7 +22,7 @@ export const usePost = () => {
     const handleGetFeed = async () => {
         setLoading(true)
         const data = await getFeed()
-        setFeed(data.posts.reverse())
+        setFeed([...data.posts].reverse())
         setLoading(false)
     }
 
@@ -79,9 +80,17 @@ export const usePost = () => {
         }
     }
 
-    useEffect(() => {
-        handleGetFeed()
-    }, [])
+
+      const handleDeleteComment = async (commentId) => {
+        try {
+            await deleteComment(commentId)
+            return true
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    }
+
 
     return { 
         loading, 
@@ -93,6 +102,7 @@ export const usePost = () => {
         handleUnLike,
         handleDeletePost,
         handleAddComment,     
-        handleGetComments     
+        handleGetComments,
+        handleDeleteComment     
     }  
 }

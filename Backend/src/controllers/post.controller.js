@@ -4,7 +4,8 @@ const { toFile } = require('@imagekit/nodejs');
 const jwt = require("jsonwebtoken");
 const likeModel = require("../models/like.model")
 const commentModel = require("../models/comment.model")
-
+const userModel = require("../models/user.model")
+const followModel = require("../models/follow.model")
 
 
 const imagekit = new Imagekit({
@@ -24,7 +25,7 @@ async function createPostController(req, res) {
 const post = await postModel.create({
     caption: req.body.caption,
     imgUrl: file.url,
-    user: req.user.id
+    user: req.user._id
 })
 
 res.status(201).json({
@@ -350,29 +351,166 @@ async function addCommentController(req, res) {
 
 async function getCommentsController(req, res) {
     try {
-        const postId = req.params.postId;
+        const postId = req.params.postId
+        const username = req.user?.username  
 
         if (!postId) {
             return res.status(400).json({
                 message: "Post ID missing"
-            });
+            })
         }
 
         const comments = await commentModel.find({
             post: postId
-        }).sort({ createdAt: -1 });
+        }).sort({ createdAt: -1 })
+
+        const updatedComments = comments.map(c => ({
+            ...c.toObject(),
+            isOwner: c.user === username
+        }))
 
         res.status(200).json({
-            comments
-        });
+            comments: updatedComments
+        })
 
     } catch (error) {
-        console.log("GET COMMENT ERROR:", error);
+        console.log("GET COMMENT ERROR:", error)
         res.status(500).json({
             message: error.message
-        });
+        })
     }
 }
+
+
+async function deleteCommentController(req, res) {
+    try {
+        const username = req.user?.username
+        const commentId = req.params.commentId
+
+        console.log("USER:", username)
+        console.log("COMMENT ID:", commentId)
+
+        if (!username) {
+            return res.status(401).json({
+                message: "User not authenticated"
+            })
+        }
+
+        if (!commentId) {
+            return res.status(400).json({
+                message: "Comment ID missing"
+            })
+        }
+
+        const comment = await commentModel.findById(commentId)
+
+        if (!comment) {
+            return res.status(404).json({
+                message: "Comment not found"
+            })
+        }
+
+        if (comment.user.toLowerCase() !== username.toLowerCase()) {
+          return res.status(403).json({
+             message: "You can delete only your own comment"
+            })
+        }
+
+        //  delete
+        await commentModel.findByIdAndDelete(commentId)
+
+        res.status(200).json({
+            message: "Comment deleted successfully"
+        })
+
+    } catch (error) {
+        console.log("DELETE COMMENT ERROR:", error)
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+async function getUserProfileController(req, res) {
+    try {
+        const { username } = req.params
+
+        const user = await userModel.findOne({ username })
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            })
+        }
+
+        // POSTS
+        const posts = await postModel.find({
+            user: user._id
+        })
+
+        // FOLLOWERS COUNT
+        const followers = await followModel.countDocuments({
+            followee: user._id,
+            status: "accepted"
+        })
+
+        // FOLLOWING COUNT
+        const following = await followModel.countDocuments({
+            follower: user._id,
+            status: "accepted"
+        })
+
+        // IS FOLLOWING
+        const isFollowing = await followModel.findOne({
+            follower: req.user._id,
+            followee: user._id,
+            status: "accepted"
+        })
+
+        // 🔥🔥 NEW CODE (IMPORTANT)
+
+        // FOLLOWERS LIST
+        const followersRaw = await followModel.find({
+            followee: user._id,
+            status: "accepted"
+        }).populate("follower", "username profileImage")
+
+        // FOLLOWING LIST
+        const followingRaw = await followModel.find({
+            follower: user._id,
+            status: "accepted"
+        }).populate("followee", "username profileImage")
+
+        // CLEAN ARRAY
+        const followersList = followersRaw.map(f => f.follower)
+        const followingList = followingRaw.map(f => f.followee)
+
+        // RESPONSE
+        res.json({
+            user: {
+                username: user.username,
+                profileImage: user.profileImage,
+                bio: user.bio,
+                followers,
+                following,
+                isFollowing: !!isFollowing
+            },
+            posts,
+            postCount: posts.length,
+
+            // 🔥 ADD THIS
+            followersList,
+            followingList
+        })
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: err.message
+        })
+    }
+}
+
 
 
 module.exports = {
@@ -384,5 +522,8 @@ module.exports = {
     getFeedController,
     unLikePostController,
     addCommentController,
-    getCommentsController
+    getCommentsController,
+    deleteCommentController,
+    getUserProfileController
+
 }

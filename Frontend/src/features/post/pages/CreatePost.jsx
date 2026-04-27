@@ -5,43 +5,66 @@ import { useNavigate } from 'react-router'
 
 const CreatePost = () => {
 
-    const [ caption, setCaption ] = useState("")
-    const postImageInputFieldRef = useRef(null)
+    const [caption, setCaption] = useState("")
+    const [preview, setPreview] = useState(null)
+    const fileRef = useRef(null)
 
     const navigate = useNavigate()
-
     const { loading, handleCreatePost } = usePost()
+
+    function handleImageChange(e) {
+        const file = e.target.files[0]
+        if (file) {
+            setPreview(URL.createObjectURL(file))
+        }
+    }
 
     async function handleSubmit(e) {
         e.preventDefault()
-        const file = postImageInputFieldRef.current.files[ 0 ]
-
-        await handleCreatePost(file,caption)
-
+        const file = fileRef.current.files[0]
+        await handleCreatePost(file, caption)
         navigate('/')
-
-    }
-
-    if(loading){
-        return (
-            <main>
-                <h1>creating post</h1>
-            </main>
-        )
     }
 
     return (
-        <main className='create-post-page' >
+        <main className='create-post-page'>
             <div className="form-container">
-                <h1>Create post</h1>
-                <form onSubmit={handleSubmit} >
-                    <label className='post-image-label' htmlFor="postImage">Select image</label>
-                    <input ref={postImageInputFieldRef} hidden type="file" name='postImage' id='postImage' />
-                    <input
+
+                <h1>Create Post</h1>
+
+                <form onSubmit={handleSubmit}>
+
+                    {/* IMAGE PREVIEW */}
+                    <label className='upload-box'>
+                        {preview ? (
+                            <img src={preview} alt="preview" />
+                        ) : (
+                            <div className="upload-placeholder">
+                                <span>📸</span>
+                                <p>Upload Image</p>
+                            </div>
+                        )}
+                        <input 
+                            ref={fileRef}
+                            type="file" 
+                            hidden 
+                            onChange={handleImageChange}
+                        />
+                    </label>
+
+                    {/* CAPTION */}
+                    <textarea
                         value={caption}
-                        onChange={(e) => { setCaption(e.target.value) }}
-                        type="text" name='caption' id='caption' placeholder='Enter Caption' />
-                    <button className='button primary-button' >create post</button>
+                        onChange={(e) => setCaption(e.target.value)}
+                        placeholder="Write something beautiful..."
+                        className='caption-input'
+                    />
+
+                    {/* BUTTON */}
+                    <button className='submit-btn'>
+                        {loading ? "Posting..." : "✨ Create Post"}
+                    </button>
+
                 </form>
             </div>
         </main>

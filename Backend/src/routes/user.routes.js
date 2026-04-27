@@ -3,6 +3,7 @@ const userController = require("../controllers/user.controller")
 const identifyUser = require("../middleware/auth.middleware")
 
 const userRouter = express.Router();
+const upload = require("../middleware/upload")   // 👈 ऊपर import
 
 
 /**
@@ -27,5 +28,12 @@ userRouter.post("/unfollow/:username", identifyUser, userController.unfollowUser
  * @access Private
  */
 userRouter.post("/follow/respond/:username", identifyUser, userController.respondToFollowController)
+
+userRouter.put(
+  "/edit",
+  identifyUser,
+  upload.single("profileImage"),   // 🔥 यही यहाँ लगता है
+  userController.updateProfileController
+)
 
 module.exports = userRouter;

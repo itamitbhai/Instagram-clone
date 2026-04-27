@@ -1,27 +1,39 @@
+
 const jwt = require("jsonwebtoken")
+
+
+const userModel = require("../models/user.model")
 
 async function identifyUser(req, res, next) {
     const token = req.cookies?.token;
-    
-    if(!token) {
-       return res.status(401).json({
-          message: "Token not Provided, unauthoraized access"
+
+    if (!token) {
+        return res.status(401).json({
+            message: "Token not provided"
         })
     }
-    let decoded;
+
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET)
-      
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+        
+        const user = await userModel.findById(decoded.id)
+
+        if (!user) {
+            return res.status(401).json({
+                message: "User not found"
+            })
+        }
+
+        req.user = user   // ✅ FULL USER OBJECT
+
+        next()
 
     } catch (error) {
-      return res.status(401).json({
-          message: "unauthorized access"
+        return res.status(401).json({
+            message: "Unauthorized access"
         })
     }
-    req.user = decoded
-
-    next()
 }
-
 
 module.exports = identifyUser

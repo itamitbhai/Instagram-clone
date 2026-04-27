@@ -4,7 +4,7 @@ const MainLayout = () => {
   return (
     <div style={{ display: "flex" }}>
       
-      <Sidebar />  {/* ✅ Sidebar */}
+      <Sidebar />  
 
       <div style={{ marginLeft: "80px",
           width: "100%",

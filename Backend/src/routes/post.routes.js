@@ -64,4 +64,14 @@ postRouter.post("/comment/:postId", identifyUser, postController.addCommentContr
  */
 postRouter.get("/comment/:postId", identifyUser, postController.getCommentsController)
 
+/**
+ * @routes delete /api/posts/comment/:commentId
+ * @description delete any comment by the owner
+ * @access Private
+ */
+postRouter.delete("/comment/:commentId", identifyUser, postController.deleteCommentController)
+
+
+postRouter.get("/user/:username", identifyUser, postController.getUserProfileController)
+
 module.exports = postRouter
