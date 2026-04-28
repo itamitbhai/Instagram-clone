@@ -32,7 +32,7 @@ userRouter.post("/follow/respond/:username", identifyUser, userController.respon
 userRouter.put(
   "/edit",
   identifyUser,
-  upload.single("profileImage"),   // 🔥 यही यहाँ लगता है
+  upload.single("profileImage"),
   userController.updateProfileController
 )
 

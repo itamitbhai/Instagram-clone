@@ -1,25 +1,29 @@
 const Conversation = require("../models/conversation.model.js");
 
 const createConversation = async (req, res) => {
-  try {
-    const { senderId, receiverId } = req.body;
+  const { senderId, receiverId } = req.body;
 
-    // check existing
-    let convo = await Conversation.findOne({
+   try {
+    //  check existing conversation
+    const existing = await Conversation.findOne({
       members: { $all: [senderId, receiverId] },
     });
 
-    if (!convo) {
-      convo = await Conversation.create({
-        members: [senderId, receiverId],
-      });
+    if (existing) {
+      return res.status(200).json(existing);
     }
 
-    res.json(convo);
+    // create new
+    const newConv = await Conversation.create({
+      members: [senderId, receiverId],
+    });
+
+    res.status(201).json(newConv);
   } catch (err) {
     res.status(500).json(err.message);
   }
 };
+   
 
 const getUserConversations = async (req, res) => {
   try {

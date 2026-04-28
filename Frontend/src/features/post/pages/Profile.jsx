@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
+import axios from "axios"
 import "../style/profile.scss"
+import Message from "../../post/pages/Message"
 
 import { getUserProfile } from "../services/post.api"
 import { followUser, unfollowUser, updateProfile } from "../../auth/services/auth.api"
@@ -9,6 +11,7 @@ import { useAuth } from "../../auth/hooks/useAuth"
 const Profile = () => {
 
     const { username } = useParams()
+    const navigate = useNavigate()
     const { user: currentUser } = useAuth()
 
     const [data, setData] = useState(null)
@@ -54,29 +57,62 @@ const Profile = () => {
         }
     }
 
-    // 🔥 SAVE EDIT
-  async function handleSave() {
+    
+
+   async function handleMessage() {
+
+    const senderId = currentUser?._id || currentUser?.id;
+     const receiverId = currentUser?._id || currentUser?.id;
+    console.log("DEBUG:", { senderId, receiverId, data });
+
+    // 🔥 strong validation
+    if (!senderId) {
+        console.log("❌ senderId missing");
+        return;
+    }
+
+    if (!receiverId) {
+        console.log("❌ receiverId missing (data not loaded yet)");
+        return;
+    }
+
     try {
-        const formData = new FormData()
+        const res = await axios.post(
+            "http://localhost:3000/api/conversations",
+            {
+                senderId,
+                receiverId,
+            }
+        );
 
-        formData.append("bio", bio)
-
-        // 🔥 ALWAYS APPEND IF EXISTS
-        if (image) {
-            formData.append("profileImage", image)
-        }
-
-        await updateProfile(formData)
-
-        // 🔥 reload from backend (best way)
-        await loadProfile()
-
-        setShowEdit(false)
+        navigate("/messages", {
+            state: { conversation: res.data }
+        });
 
     } catch (err) {
-        console.log("SAVE ERROR:", err)
+        console.log("❌ Message Error:", err);
     }
 }
+
+    // 🔥 SAVE EDIT
+    async function handleSave() {
+        try {
+            const formData = new FormData()
+
+            formData.append("bio", bio)
+
+            if (image) {
+                formData.append("profileImage", image)
+            }
+
+            await updateProfile(formData)
+            await loadProfile()
+            setShowEdit(false)
+
+        } catch (err) {
+            console.log("SAVE ERROR:", err)
+        }
+    }
 
     if (loading) return <h2 style={{ textAlign: "center" }}>Loading...</h2>
     if (!data) return <h2>User not found</h2>
@@ -98,7 +134,7 @@ const Profile = () => {
                     <div className="top">
                         <h2>{data.user.username}</h2>
 
-                        {/* 🔥 FINAL BUTTON LOGIC */}
+                        {/*  BUTTONS */}
                         {currentUser && currentUser.username === data.user.username ? (
                             <button 
                                 className="edit-btn"
@@ -111,12 +147,23 @@ const Profile = () => {
                                 Edit Profile
                             </button>
                         ) : (
-                            <button 
-                                className="follow-btn"
-                                onClick={handleFollow}
-                            >
-                                {data.user.isFollowing ? "Following" : "Follow"}
-                            </button>
+                            <div style={{ display: "flex", gap: "10px" }}>
+                                <button 
+                                    className="follow-btn"
+                                    onClick={handleFollow}
+                                >
+                                    {data.user.isFollowing ? "Following" : "Follow"}
+                                </button>
+
+                                <button 
+                                    className="msg-btn"
+                                    // disabled={!data?.user?._id}
+                                    onClick={handleMessage}
+
+                                >
+                                    Message
+                                </button>
+                            </div>
                         )}
                     </div>
 
@@ -166,22 +213,21 @@ const Profile = () => {
                     />
                 </div>
             )}
-            
 
-            {/*  EDIT MODAL */}
+            {/* EDIT MODAL */}
             {showEdit && (
                 <div className="modal" onClick={() => setShowEdit(false)}>
                     <div className="modal-box" onClick={(e)=>e.stopPropagation()}>
                         <h3>Edit Profile</h3>
 
-                    <input 
-                        type="file" 
-                        accept="image/*"
-                        onChange={(e) => {
-                        const file = e.target.files[0]
-                        setImage(file)
-                        }}
-                    />
+                        <input 
+                            type="file" 
+                            accept="image/*"
+                            onChange={(e) => {
+                                const file = e.target.files[0]
+                                setImage(file)
+                            }}
+                        />
 
                         <textarea
                             value={bio}
@@ -196,60 +242,59 @@ const Profile = () => {
                 </div>
             )}
 
-
-            {/* Followers model */}
+            {/* Followers modal */}
             {showFollowers && (
-               <div className="modal" onClick={() => setShowFollowers(false)}>
-                   <div className="modal-box" onClick={(e)=>e.stopPropagation()}>
-                       <h3>Followers</h3>
+                <div className="modal" onClick={() => setShowFollowers(false)}>
+                    <div className="modal-box" onClick={(e)=>e.stopPropagation()}>
+                        <h3>Followers</h3>
 
-                      {!data?.followersList || data.followersList.length === 0 ? (
-                      <p className="empty">No followers</p>
-            ) : (
-                    data.followersList.map(user => (
-                        <div 
-                        key={user._id} 
-                        className="user-row"
-                        onClick={() => window.location.href = `/profile/${user.username}`}
-                    >
-                        <img src={user.profileImage} alt="" />
-                    <div>
-                    <span className="username">{user.username}</span>
-                    <span className="sub">View profile</span>
+                        {!data?.followersList || data.followersList.length === 0 ? (
+                            <p className="empty">No followers</p>
+                        ) : (
+                            data.followersList.map(user => (
+                                <div 
+                                    key={user._id} 
+                                    className="user-row"
+                                    onClick={() => window.location.href = `/profile/${user.username}`}
+                                >
+                                    <img src={user.profileImage} alt="" />
+                                    <div>
+                                        <span className="username">{user.username}</span>
+                                        <span className="sub">View profile</span>
+                                    </div>
+                                </div>
+                            ))
+                        )}
                     </div>
-              </div>
-               ))
+                </div>
             )}
-            </div>
-          </div>
-           )}
 
+            {/* Following modal */}
+            {showFollowing && (
+                <div className="modal" onClick={() => setShowFollowing(false)}>
+                    <div className="modal-box" onClick={(e)=>e.stopPropagation()}>
+                        <h3>Following</h3>
 
-           {showFollowing && (
-  <div className="modal" onClick={() => setShowFollowing(false)}>
-    <div className="modal-box" onClick={(e)=>e.stopPropagation()}>
-      <h3>Following</h3>
-
-      {!data?.followingList || data.followingList.length === 0 ? (
-        <p className="empty">No following</p>
-      ) : (
-        data.followingList.map(user => (
-          <div 
-            key={user._id} 
-            className="user-row"
-            onClick={() => window.location.href = `/profile/${user.username}`}
-          >
-            <img src={user.profileImage} alt="" />
-            <div>
-              <span className="username">{user.username}</span>
-              <span className="sub">View profile</span>
-            </div>
-          </div>
-        ))
-      )}
-    </div>
-  </div>
-)}
+                        {!data?.followingList || data.followingList.length === 0 ? (
+                            <p className="empty">No following</p>
+                        ) : (
+                            data.followingList.map(user => (
+                                <div 
+                                    key={user._id} 
+                                    className="user-row"
+                                    onClick={() => window.location.href = `/profile/${user.username}`}
+                                >
+                                    <img src={user.profileImage} alt="" />
+                                    <div>
+                                        <span className="username">{user.username}</span>
+                                        <span className="sub">View profile</span>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            )}
 
         </div>
     )

@@ -30,8 +30,12 @@ const Sidebar = () => {
         <NavItem icon={<Search />} text="Search" />
         <NavItem icon={<Compass />} text="Explore" />
         <NavItem icon={<PlayCircle />} text="Reels" />
-        <NavItem icon={<MessageCircle />} text="Messages" />
         <NavItem icon={<Heart />} text="Notifications" />
+        <NavItem 
+  icon={<MessageCircle />} 
+  text="Messages" 
+  onClick={() => navigate("/messages")} 
+/>
 
         {/* CREATE */}
         <NavItem 

@@ -5,21 +5,6 @@
  
  async function registerController (req, res) {
     const {email, username, password, bio, profileImage} = req.body
-
-    // const isUserExistsByEmail = await userModel.findOne({ email })
-
-    // if(isUserExistsByEmail){
-    //     return res.status(409).json({
-    //         message: "User already exists with send email"
-    //     })
-    // }
-
-    // const isUserExistsByUsername = await userModel.findOne({ username })
-
-    // return res.status(409).json({
-    //     message: "Username already exists"
-    // })
-
     const isUserAlreadyExists = await userModel.findOne({
         $or: [
             { username },
@@ -65,6 +50,7 @@
     res.status(201).json({
         message:"User Registered Successfully",
         user:{
+            _id: user._id,
             email: user.email,
             username: user.username,
             bio: user.bio,
@@ -125,6 +111,7 @@
     res.status(200).json({
         message: "LoginIN succesfully",
         user: {
+            _id: user._id,
             username:user.username,
             email:user.email,
             bio:user.bio,
@@ -141,6 +128,7 @@ async function getMeController(req, res) {
 
     res.status(200).json({
         user:{
+            _id: user._id,
             username: user.username,
             email:user.email,
             bio:user.bio,
