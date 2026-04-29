@@ -13,12 +13,43 @@ import {
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
-
 import "../style/sidebar.scss";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();   
+  const { user } = useAuth();
+
+  // 🔥 HANDLE MESSAGES CLICK
+  const handleMessages = async () => {
+    try {
+      if (!user?._id) {
+        console.log("❌ User not loaded");
+        return;
+      }
+
+      const res = await fetch(
+        `http://localhost:3000/api/conversations/${user._id}`
+      );
+
+      const data = await res.json();
+
+      console.log("📩 Conversations:", data);
+
+      // ✅ agar chats exist karti hain
+      if (Array.isArray(data) && data.length > 0) {
+        navigate("/messages", {
+          state: { conversation: data[0] } // 👈 first chat auto open
+        });
+      } else {
+        // ✅ no chats
+        navigate("/messages");
+      }
+
+    } catch (err) {
+      console.log("❌ Message Click Error:", err);
+      navigate("/messages");
+    }
+  };
 
   return (
     <div className="sidebar">
@@ -31,11 +62,13 @@ const Sidebar = () => {
         <NavItem icon={<Compass />} text="Explore" />
         <NavItem icon={<PlayCircle />} text="Reels" />
         <NavItem icon={<Heart />} text="Notifications" />
+
+        {/* 🔥 FIXED MESSAGES */}
         <NavItem 
-  icon={<MessageCircle />} 
-  text="Messages" 
-  onClick={() => navigate("/messages")} 
-/>
+          icon={<MessageCircle />} 
+          text="Messages" 
+          onClick={handleMessages}
+        />
 
         {/* CREATE */}
         <NavItem 
@@ -44,7 +77,7 @@ const Sidebar = () => {
           onClick={() => navigate("/create-post")} 
         />
 
-        {/* 🔥 FIXED PROFILE */}
+        {/* PROFILE */}
         <NavItem 
           icon={<User />} 
           text="Profile" 
@@ -66,12 +99,13 @@ const Sidebar = () => {
   );
 };
 
+// 🔹 NAV ITEM COMPONENT
 const NavItem = ({ icon, text, active, badge, onClick }) => {
   return (
     <div 
       className={`nav-item ${active ? "active" : ""}`} 
       onClick={onClick}
-      style={{ cursor: "pointer" }}   
+      style={{ cursor: "pointer" }}
     >
       <div className="icon">
         {icon}

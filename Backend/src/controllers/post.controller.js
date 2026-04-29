@@ -433,81 +433,86 @@ async function deleteCommentController(req, res) {
 
 async function getUserProfileController(req, res) {
     try {
-        const { username } = req.params
+        const { username } = req.params;
 
-        const user = await userModel.findOne({ username })
+        // 🔥 GET USER
+        const user = await userModel.findOne({ username });
 
         if (!user) {
             return res.status(404).json({
                 message: "User not found"
-            })
+            });
         }
 
-        // POSTS
+        // 🔥 POSTS
         const posts = await postModel.find({
             user: user._id
-        })
+        });
 
-        // FOLLOWERS COUNT
+        // 🔥 FOLLOWERS COUNT
         const followers = await followModel.countDocuments({
             followee: user._id,
             status: "accepted"
-        })
+        });
 
-        // FOLLOWING COUNT
+        // 🔥 FOLLOWING COUNT
         const following = await followModel.countDocuments({
             follower: user._id,
             status: "accepted"
-        })
+        });
 
-        // IS FOLLOWING
-        const isFollowing = await followModel.findOne({
-            follower: req.user._id,
-            followee: user._id,
-            status: "accepted"
-        })
+        // 🔥 IS FOLLOWING (safe check)
+        let isFollowing = false;
 
-        // 🔥🔥 NEW CODE (IMPORTANT)
+        if (req.user?._id) {
+            const followDoc = await followModel.findOne({
+                follower: req.user._id,
+                followee: user._id,
+                status: "accepted"
+            });
 
-        // FOLLOWERS LIST
+            isFollowing = !!followDoc;
+        }
+
+        // 🔥 FOLLOWERS LIST
         const followersRaw = await followModel.find({
             followee: user._id,
             status: "accepted"
-        }).populate("follower", "username profileImage")
+        }).populate("follower", "username profileImage");
 
-        // FOLLOWING LIST
+        // 🔥 FOLLOWING LIST
         const followingRaw = await followModel.find({
             follower: user._id,
             status: "accepted"
-        }).populate("followee", "username profileImage")
+        }).populate("followee", "username profileImage");
 
-        // CLEAN ARRAY
-        const followersList = followersRaw.map(f => f.follower)
-        const followingList = followingRaw.map(f => f.followee)
+        // 🔥 CLEAN ARRAYS
+        const followersList = followersRaw.map(f => f.follower);
+        const followingList = followingRaw.map(f => f.followee);
 
-        // RESPONSE
-        res.json({
+        // ✅ FINAL RESPONSE (IMPORTANT FIX INCLUDED)
+        return res.json({
             user: {
+                _id: user._id,  // 💣 CRITICAL FIX
                 username: user.username,
                 profileImage: user.profileImage,
                 bio: user.bio,
                 followers,
                 following,
-                isFollowing: !!isFollowing
+                isFollowing
             },
             posts,
             postCount: posts.length,
-
-            // 🔥 ADD THIS
             followersList,
             followingList
-        })
+        });
 
     } catch (err) {
-        console.log(err)
-        res.status(500).json({
-            message: err.message
-        })
+        console.log("PROFILE ERROR:", err);
+
+        return res.status(500).json({
+            message: err.message || "Server Error"
+        });
     }
 }
 
