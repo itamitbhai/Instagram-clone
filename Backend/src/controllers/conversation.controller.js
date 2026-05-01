@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Conversation = require("../models/conversation.model.js");
-const Message = require("../models/Message.model.js"); // 👈 tumhare case me ye sahi hai
+const Message = require("../models/Message.model.js"); 
 require("../models/user.model.js");
 
 const createConversation = async (req, res) => {

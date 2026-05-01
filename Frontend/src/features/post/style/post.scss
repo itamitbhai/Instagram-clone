@@ -1,24 +1,312 @@
-.Like svg {
-  color: gray;
-  transition: 0.2s;
+// /* RESET */
+// * {
+//   margin: 0;
+//   padding: 0;
+//   box-sizing: border-box;
+// }
+
+// /* WRAPPER */
+// .postWrapper {
+//   display: flex;
+//   justify-content: center;
+//   width: 100%;
+// }
+
+// /* POST */
+// .post {
+//   width: 100%;
+//   max-width: 470px;
+//   background: #000;
+//   border-bottom: 1px solid #262626;
+//   color: #fff;
+//   position: relative;
+// }
+
+// /* USER */
+// .user {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 10px;
+
+//   .left {
+//     display: flex;
+//     align-items: center;
+//     gap: 10px;
+//     cursor: pointer;
+
+//     img {
+//       width: 32px;
+//       height: 32px;
+//       border-radius: 50%;
+//     }
+
+//     span {
+//       font-size: 14px;
+//       font-weight: 600;
+//     }
+//   }
+
+//   .moreBtn {
+//     background: none;
+//     border: none;
+//     color: white;
+//     font-size: 18px;
+//     cursor: pointer;
+//   }
+// }
+
+// /* IMAGE */
+// .imgContainer {
+//   width: 100%;
+
+//   img {
+//     width: 100%;
+//     height: auto;
+//     object-fit: cover;
+//   }
+// }
+
+// /* ACTIONS */
+// .actions {
+//   padding: 8px 10px;
+
+//   .left {
+//     display: flex;
+//     gap: 15px;
+//   }
+
+//   button {
+//     background: none;
+//     border: none;
+//     cursor: pointer;
+
+//     svg {
+//       width: 24px;
+//       height: 24px;
+//       fill: white;
+//     }
+
+//     .liked {
+//       fill: red;
+//     }
+//   }
+// }
+
+// /* CAPTION */
+// .caption {
+//   padding: 0 10px 10px;
+//   font-size: 14px;
+
+//   .username {
+//     font-weight: 600;
+//     margin-right: 5px;
+//   }
+// }
+
+// /* COMMENTS */
+// .comments {
+//   border-top: 1px solid #262626;
+//   padding: 10px;
+// }
+
+// /* DELETE POPUP */
+// .deletePopup {
+//   position: absolute;
+//   top: 40px;
+//   right: 10px;
+//   background: #1a1a1a;
+//   border-radius: 8px;
+//   padding: 10px;
+//   z-index: 10;
+// }
+
+// /* MOBILE */
+// @media (max-width: 768px) {
+//   .post {
+//     max-width: 100%;
+//   }
+
+//   .actions svg {
+//     width: 22px;
+//     height: 22px;
+//   }
+
+//   .caption {
+//     font-size: 13px;
+//   }
+// }
+
+// /* EXTRA SMALL */
+// @media (max-width: 400px) {
+//   .caption {
+//     font-size: 12px;
+//   }
+// }
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.Like svg.like {
-  color: red;   /* ❤️ red when liked */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden; // 🔥 prevent horizontal gap
 }
 
+/* WRAPPER */
+.postWrapper {
+  width: 100%;
+  display: block; // 🔥 remove flex centering (main fix)
+}
+
+/* POST */
 .post {
-    position: relative;
+  width: 100%;
+  max-width: 470px;
+  background: #000;
+  border-bottom: 1px solid #262626;
+  color: #fff;
+  position: relative;
+  margin: 0; // 🔥 no auto margin
 }
 
-.delete-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: red;
-    color: white;
+/* ================= USER ================= */
+.user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+
+    img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    span {
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+
+  .moreBtn {
+    background: none;
     border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    z-index: 10;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+  }
+}
+
+/* ================= IMAGE ================= */
+.imgContainer {
+  width: 100%;
+
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block; // 🔥 removes image gap
+  }
+}
+
+/* ================= ACTIONS ================= */
+.actions {
+  padding: 8px 10px;
+
+  .left {
+    display: flex;
+    gap: 15px;
+  }
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    .liked {
+      fill: red;
+    }
+  }
+}
+
+/* ================= CAPTION ================= */
+.caption {
+  padding: 0 10px 10px;
+  font-size: 14px;
+
+  .username {
+    font-weight: 600;
+    margin-right: 5px;
+  }
+}
+
+/* ================= COMMENTS ================= */
+.comments {
+  border-top: 1px solid #262626;
+  padding: 10px;
+}
+
+/* ================= DELETE ================= */
+.deletePopup {
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 10;
+}
+
+/* ================= DESKTOP CENTER (LIKE INSTAGRAM) ================= */
+@media (min-width: 768px) {
+  .postWrapper {
+    display: flex;
+    justify-content: center; // ✅ only desktop center
+  }
+
+  .post {
+    max-width: 470px;
+  }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+  .post {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .actions svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .caption {
+    font-size: 13px;
+  }
+}
+
+/* EXTRA SMALL */
+@media (max-width: 400px) {
+  .caption {
+    font-size: 12px;
+  }
 }

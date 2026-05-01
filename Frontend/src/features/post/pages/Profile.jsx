@@ -23,7 +23,7 @@ const Profile = () => {
     const [bio, setBio] = useState("");
     const [image, setImage] = useState("");
 
-    // 🔥 LOAD PROFILE
+    //  LOAD PROFILE
     useEffect(() => {
         loadProfile();
     }, [username]);
@@ -40,7 +40,7 @@ const Profile = () => {
         }
     }
 
-    // 🔥 DEBUG (IMPORTANT)
+    //  DEBUG (IMPORTANT)
     useEffect(() => {
         if (data) {
             console.log("USERNAME:", username);
@@ -64,19 +64,19 @@ const Profile = () => {
         }
     }
 
-    // 🔥 MESSAGE (FINAL FIX)
+    //  MESSAGE (FINAL FIX)
     async function handleMessage() {
         const senderId = currentUser?._id;
         const receiverId = data?.user?._id;
 
         if (!senderId || !receiverId) {
-            console.log("❌ Missing IDs");
+            console.log(" Missing IDs");
             return;
         }
 
-        // ❌ prevent self chat
+        // prevent self chat
         if (String(senderId) === String(receiverId)) {
-            console.log("❌ Cannot message yourself");
+            console.log(" Cannot message yourself");
             return;
         }
 
@@ -91,7 +91,7 @@ const Profile = () => {
             });
 
         } catch (err) {
-            console.log("❌ Message Error:", err);
+            console.log("Message Error:", err);
         }
     }
 
@@ -234,6 +234,55 @@ const Profile = () => {
                     </div>
                 </div>
             )}
+
+            {/* EDIT PROFILE MODAL */}
+            {showEdit && (
+              <div className="modal" onClick={() => setShowEdit(false)}>
+                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                  <h3>Edit Profile</h3>
+
+                  {/* PROFILE IMAGE */}
+                  <input
+                    type="file"
+                    onChange={(e) => setImage(e.target.files[0])}
+                  />
+
+                  {/* BIO */}
+                  <textarea
+                    placeholder="Enter your bio..."
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                  />
+
+                  {/* BUTTONS */}
+                  <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
+                    <button onClick={handleSave}>Save</button>
+                    <button onClick={() => setShowEdit(false)}>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {selectedPost && (
+             <div 
+               className="modal" 
+               onClick={() => setSelectedPost(null)}
+             >
+               <div 
+                 className="imageModal" 
+                 onClick={(e) => e.stopPropagation()}
+               >
+                 <img src={selectedPost.imgUrl} alt="preview" />
+
+                 {/*  CLOSE BUTTON */}
+                 <button 
+                   className="closeBtn"
+                   onClick={() => setSelectedPost(null)}
+                 >
+                   ✕
+                 </button>
+               </div>
+             </div>
+           )}
 
         </div>
     );

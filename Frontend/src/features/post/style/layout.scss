@@ -1,0 +1,19 @@
+/* LAYOUT */
+.layout {
+  display: flex;
+}
+
+/* SIDEBAR SPACE */
+.mainContent {
+  flex: 1;
+  margin-left: 80px; // desktop sidebar space
+  width: 100%;
+  transition: margin-left 0.3s ease;
+}
+
+/* 📱 MOBILE FIX (IMPORTANT) */
+@media (max-width: 768px) {
+  .mainContent {
+    margin-left: 0; // 🔥 REMOVE GAP ON MOBILE
+  }
+}
