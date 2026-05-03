@@ -236,32 +236,43 @@ const Profile = () => {
             )}
 
             {/* EDIT PROFILE MODAL */}
-            {showEdit && (
-              <div className="modal" onClick={() => setShowEdit(false)}>
-                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                  <h3>Edit Profile</h3>
+           {showEdit && (
+  <div className="modal" onClick={() => setShowEdit(false)}>
+    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
 
-                  {/* PROFILE IMAGE */}
-                  <input
-                    type="file"
-                    onChange={(e) => setImage(e.target.files[0])}
-                  />
+      <h2>Edit Profile</h2>
 
-                  {/* BIO */}
-                  <textarea
-                    placeholder="Enter your bio..."
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                  />
+      {/* PROFILE IMAGE */}
+      <label className="file-upload">
+        <span>Change Profile Photo</span>
+        <input
+          type="file"
+          onChange={(e) => setImage(e.target.files[0])}
+        />
+      </label>
 
-                  {/* BUTTONS */}
-                  <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
-                    <button onClick={handleSave}>Save</button>
-                    <button onClick={() => setShowEdit(false)}>Cancel</button>
-                  </div>
-                </div>
-              </div>
-            )}
+      {/* BIO */}
+      <textarea
+        className="bio-input"
+        placeholder="Write something about yourself..."
+        value={bio}
+        onChange={(e) => setBio(e.target.value)}
+      />
+
+      {/* BUTTONS */}
+      <div className="modal-actions">
+        <button className="cancel-btn" onClick={() => setShowEdit(false)}>
+          Cancel
+        </button>
+
+        <button className="save-btn" onClick={handleSave}>
+          Save
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
             {selectedPost && (
              <div 
                className="modal" 

@@ -61,7 +61,6 @@ const getMessages = async (req, res) => {
 };
 
 
-// ✅ MARK AS SEEN
 const markSeen = async (req, res) => {
   try {
     const { conversationId } = req.params;
@@ -83,9 +82,34 @@ const markSeen = async (req, res) => {
   }
 };
 
+const deleteMessage = async (req, res) => {
+  try {
+    console.log("USER:", req.user); // 👈 debug
+
+    const message = await Message.findById(req.params.id);
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    if (String(message.senderId) !== String(req.user._id)) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    await message.deleteOne();
+
+    res.status(200).json({ message: "Message deleted" });
+
+  } catch (err) {
+    console.log("DELETE ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 module.exports = {
   sendMessage,
   getMessages,
   markSeen,
+  deleteMessage,
 };

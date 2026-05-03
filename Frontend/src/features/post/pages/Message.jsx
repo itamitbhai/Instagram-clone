@@ -5,9 +5,32 @@ import { useAuth } from "../../auth/hooks/useAuth";
 import { useLocation } from "react-router-dom";
 import "../style/message.scss";
 
+
 const Message = () => {
   const { user } = useAuth();
   const userId = user?._id;
+
+  // 🔥 ADD THESE STATES + FUNCTIONS (TOP में userId के नीचे)
+
+const [activeMsg, setActiveMsg] = useState(null);
+const pressTimer = useRef(null);
+
+const handlePressStart = (id) => {
+  pressTimer.current = setTimeout(() => {
+    setActiveMsg(id);
+  }, 500);
+};
+
+const handlePressEnd = () => {
+  clearTimeout(pressTimer.current);
+};
+
+// 🔥 AUTO CLOSE MENU
+useEffect(() => {
+  const closeMenu = () => setActiveMsg(null);
+  window.addEventListener("click", closeMenu);
+  return () => window.removeEventListener("click", closeMenu);
+}, []);
 
   const location = useLocation();
 
@@ -122,9 +145,66 @@ const Message = () => {
     }
   };
 
+  // 🗑 DELETE MESSAGE
+  const deleteMessage = async (msgId, type = "me") => {
+  try {
+    if (type === "everyone") {
+      await axios.delete(
+        `http://localhost:3000/api/messages/${msgId}`,
+        {
+          withCredentials: true, // 👈 FIX
+        }
+      );
+
+      // 🔥 socket notify (optional but recommended)
+      socket.emit("deleteMessage", { messageId: msgId });
+
+    } else {
+      // optional: delete only for me (if backend supports)
+      await axios.put(
+        `http://localhost:3000/api/messages/delete-for-me/${msgId}`,
+        { userId },
+        {
+          withCredentials: true, // 👈 FIX
+        }
+      );
+    }
+
+    // UI update
+    setMessages((prev) => prev.filter((m) => m._id !== msgId));
+
+  } catch (err) {
+    console.log("Delete Msg Error:", err.response?.data || err.message);
+  }
+};
+
+  // 💣 DELETE CHAT
+  const deleteChat = async () => {
+    if (!currentChat) return;
+
+    if (!window.confirm("Delete entire chat?")) return;
+
+    try {
+      await axios.delete(
+        `http://localhost:3000/api/conversations/${currentChat._id}`,
+        {
+          withCredentials:true,
+        }
+      );
+
+      setConversations((prev) =>
+        prev.filter((c) => c._id !== currentChat._id)
+      );
+
+      setCurrentChat(null);
+      setMessages([]);
+    } catch (err) {
+      console.log("Delete Chat Error:", err);
+    }
+  };
+
   if (!userId) return <div>Loading...</div>;
 
-  // 🔥 CURRENT CHAT USER
   const chatUser = currentChat?.members?.find(
     (m) => String(m?._id || m) !== String(userId)
   );
@@ -178,7 +258,6 @@ const Message = () => {
             {/* HEADER */}
             <div className="chatHeader">
 
-              {/* 🔙 BACK BUTTON */}
               <button
                 className="backBtn"
                 onClick={() => setCurrentChat(null)}
@@ -195,32 +274,51 @@ const Message = () => {
                 alt=""
               />
               <span>{chatUser?.username || "User"}</span>
+
+              {/* 🗑 DELETE CHAT */}
+              <button className="deleteChatBtn" onClick={deleteChat}>
+                🗑
+              </button>
             </div>
 
             {/* MESSAGES */}
-            <div className="messages">
-              {messages.map((m) => (
-                <div
-                  ref={scrollRef}
-                  key={m._id}
-                  className={
-                    String(m.senderId) === String(userId)
-                      ? "message own"
-                      : "message"
-                  }
-                >
-                  <p>{m.text}</p>
-                  <span className="time">
-                    {new Date(
-                      m.createdAt || Date.now()
-                    ).toLocaleTimeString()}
-                  </span>
-                </div>
-              ))}
+           <div className="messages">
+  {messages.map((m) => (
+    <div
+      ref={scrollRef}
+      key={m._id}
+      onMouseDown={() => handlePressStart(m._id)}
+      onMouseUp={handlePressEnd}
+      onMouseLeave={handlePressEnd}
+      onTouchStart={() => handlePressStart(m._id)}
+      onTouchEnd={handlePressEnd}
+      className={
+        String(m.senderId) === String(userId)
+          ? "message own"
+          : "message"
+      }
+    >
+      <p>{m.text}</p>
 
-              {/* ✍️ TYPING */}
-              {typing && <div className="typing">Typing...</div>}
-            </div>
+      {/* 🔥 SHOW ONLY ON LONG PRESS */}
+      {activeMsg === m._id &&
+        String(m.senderId) === String(userId) && (
+          <div className="msgActions">
+            <span onClick={() => deleteMessage(m._id, "me")}>❌</span>
+            <span onClick={() => deleteMessage(m._id, "everyone")}>🗑</span>
+          </div>
+        )}
+
+      <span className="time">
+        {new Date(
+          m.createdAt || Date.now()
+        ).toLocaleTimeString()}
+      </span>
+    </div>
+  ))}
+
+  {typing && <div className="typing">Typing...</div>}
+</div>
 
             {/* INPUT */}
             <div className="inputBox">

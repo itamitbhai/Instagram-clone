@@ -1,4 +1,3 @@
-
 .feed-page {
   display: flex;
   justify-content: center;
@@ -8,8 +7,8 @@
   overflow-x: hidden;
 
   .feed {
-    max-width: 420px;
     width: 100%;
+    max-width: 420px;
 
     .posts {
       display: flex;
@@ -95,7 +94,6 @@
           color: white;
         }
 
-        /* ❤️ LIKE ANIMATION */
         .Like svg.like {
           color: #ff3040;
           animation: pop 0.3s ease;
@@ -116,6 +114,157 @@
           color: #ddd;
           font-size: 14px;
           line-height: 1.4;
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+/* ============================= */
+/* 📱 TABLET (≤1024px) */
+/* ============================= */
+
+@media (max-width: 1024px) {
+  .feed-page {
+    padding: 20px 0;
+
+    .feed {
+      max-width: 600px;
+    }
+
+    .post img {
+      height: 400px;
+    }
+  }
+}
+
+
+
+
+
+
+
+/* ============================= */
+/* 📱 MOBILE (≤768px) */
+/* ============================= */
+
+@media (max-width: 768px) {
+  .feed-page {
+    padding: 10px 0;
+
+    .feed {
+      max-width: 100%;
+      padding: 0 10px;
+
+      .posts {
+        gap: 1.2rem;
+      }
+
+      .post {
+        border-radius: 12px;
+
+        &:hover {
+          transform: none; // ❌ remove hover
+        }
+
+        .user {
+          padding: 10px;
+
+          .img-wrapper img {
+            width: 36px;
+            height: 36px;
+          }
+
+          p {
+            font-size: 14px;
+          }
+        }
+
+        img {
+          height: auto;        // 🔥 FIX
+          max-height: 400px;
+        }
+
+        .icons {
+          padding: 10px;
+
+          svg {
+            width: 22px;
+            height: 22px;
+          }
+
+          .left {
+            gap: 12px;
+          }
+        }
+
+        .bottom {
+          padding: 0 10px 10px;
+
+          .caption {
+            font-size: 13px;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+/* ============================= */
+/* 📱 SMALL MOBILE (≤480px) */
+/* ============================= */
+
+@media (max-width: 480px) {
+  .feed-page {
+    .feed {
+      padding: 0 6px;
+
+      .post {
+        border-radius: 10px;
+
+        .user {
+          gap: 0.6rem;
+
+          .img-wrapper img {
+            width: 32px;
+            height: 32px;
+          }
+        }
+
+        img {
+          max-height: 300px;
+        }
+
+        .icons {
+          .left {
+            gap: 10px;
+          }
+
+          svg {
+            width: 20px;
+            height: 20px;
+          }
+        }
+
+        .bottom {
+          .caption {
+            font-size: 12.5px;
+          }
         }
       }
     }
