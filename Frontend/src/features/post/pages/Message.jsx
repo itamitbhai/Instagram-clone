@@ -19,7 +19,7 @@ const Message = () => {
 
   const scrollRef = useRef();
 
-  // 🔥 AUTO OPEN CHAT FROM PROFILE
+  //  AUTO OPEN CHAT FROM PROFILE
   useEffect(() => {
     if (location.state?.conversation) {
       const conv = location.state.conversation;
@@ -33,13 +33,13 @@ const Message = () => {
     }
   }, [location.state]);
 
-  // 🔥 SOCKET REGISTER
+  //  SOCKET REGISTER
   useEffect(() => {
     if (!userId) return;
     socket.emit("addUser", userId);
   }, [userId]);
 
-  // 🔥 GET CONVERSATIONS
+  //  GET CONVERSATIONS
   useEffect(() => {
     if (!userId) return;
 
@@ -49,7 +49,7 @@ const Message = () => {
       .catch((err) => console.log("Conversation Error:", err));
   }, [userId]);
 
-  // 🔥 GET MESSAGES
+  //  GET MESSAGES
   useEffect(() => {
     if (!currentChat?._id) return;
 
@@ -59,7 +59,7 @@ const Message = () => {
       .catch((err) => console.log("Message Fetch Error:", err));
   }, [currentChat]);
 
-  // 🔥 SOCKET RECEIVE MESSAGE
+  // SOCKET RECEIVE MESSAGE
   useEffect(() => {
     socket.on("getMessage", (data) => {
       setMessages((prev) => [...prev, data]);
@@ -68,7 +68,7 @@ const Message = () => {
     return () => socket.off("getMessage");
   }, []);
 
-  // 🔥 SOCKET TYPING
+  //  SOCKET TYPING
   useEffect(() => {
     socket.on("typing", () => {
       setTyping(true);
@@ -81,12 +81,12 @@ const Message = () => {
     return () => socket.off("typing");
   }, []);
 
-  // 🔥 AUTO SCROLL
+  //  AUTO SCROLL
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 🚀 SEND MESSAGE
+  //  SEND MESSAGE
   const sendMessage = async () => {
     if (!newMessage.trim() || !currentChat) return;
 
@@ -244,7 +244,7 @@ const Message = () => {
           </>
         ) : (
           <div className="noChat">
-            Start a conversation 🚀
+            Start a conversation 
           </div>
         )}
 
