@@ -1,58 +1,130 @@
-import React, { useState } from 'react'
-import "../style/form.scss"
-import { Link } from 'react-router'
-import { useAuth } from '../hooks/useAuth'
-import { useNavigate } from 'react-router'
+// import React, { useState, useEffect } from "react";
+// import "../style/form.scss";
+// import { Link, useNavigate } from "react-router-dom";
+// import { useAuth } from "../hooks/useAuth";
+
+// const Login = () => {
+//   const { user, loading, handleLogin } = useAuth();
+
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+
+//   const navigate = useNavigate();
+
+//   const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   const success = await handleLogin(email, password);
+
+//   if (success) {
+//     navigate("/feed");
+//   }
+// };
+
+
+
+//   if (loading) {
+//     return <h1>Loading...</h1>;
+//   }
+
+//   return (
+//     <main>
+//       <div className="form-container">
+//         <h1>Login</h1>
+
+//         <form onSubmit={handleSubmit}>
+//           <input
+//             onChange={(e) => setEmail(e.target.value)}
+//             type="email"
+//             placeholder="Enter email"
+//           />
+
+//           <input
+//             onChange={(e) => setPassword(e.target.value)}
+//             type="password"
+//             placeholder="Enter password"
+//           />
+
+//           <button className="button primary-button">Login</button>
+//         </form>
+
+//         <p>
+//           Don't have an account? <Link to="/register">Create One.</Link>
+//         </p>
+//       </div>
+//     </main>
+//   );
+// };
+
+// export default Login;
+
+
+import React, { useState, useEffect } from "react";
+import "../style/form.scss";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
+  const { user, loading, handleLogin } = useAuth();
 
-    const { user, loading, handleLogin } = useAuth()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [ username, setUsername ] = useState("")
-    const [ password, setPassword ] = useState("")
+  const navigate = useNavigate();
 
-    const navigate = useNavigate()
+  // ✅ Login Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
+    await handleLogin(email, password);
+  };
 
-        await handleLogin(username, password)
-
-        navigate('/')
-
+  // ✅ Auto Redirect After Login
+  useEffect(() => {
+    if (user) {
+      navigate("/feed");
     }
+  }, [user, navigate]);
 
-    if (loading) {
-        return (<main>
-            <h1>Loading.....</h1>
-        </main>)
-    }
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
+  return (
+    <main>
+      <div className="form-container">
+        <h1>Login</h1>
 
-    return (
+        <form onSubmit={handleSubmit}>
+          <input
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="Enter email"
+            value={email}
+          />
 
-        <main>
-            <div className="form-container">
-                <h1>Login</h1>
-                <form onSubmit={handleSubmit} >
-                    <input
-                        onInput={(e) => { setUsername(e.target.value) }}
-                        type="text"
-                        name='username'
-                        id='username'
-                        placeholder='Enter username' />
-                    <input
-                        onInput={(e) => { setPassword(e.target.value) }}
-                        type="password"
-                        name='password'
-                        id='password'
-                        placeholder='Enter password' />
-                    <button className='button primary-button' >Login</button>
-                </form>
-                <p>Don't have an account ? <Link to={"/register"} >Create One.</Link></p>
-            </div>
-        </main>
-    )
-}
+          <input
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Enter password"
+            value={password}
+          />
 
-export default Login
+          <button
+            type="submit"
+            className="button primary-button"
+          >
+            Login
+          </button>
+        </form>
+
+        <p>
+          Don't have an account?{" "}
+          <Link to="/register">Create One.</Link>
+        </p>
+      </div>
+    </main>
+  );
+};
+
+export default Login;

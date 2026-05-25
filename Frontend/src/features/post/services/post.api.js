@@ -1,67 +1,133 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:3000",
-    withCredentials:true
+  baseURL: "http://localhost:3000",
+  withCredentials: true,
+});
 
-})
+// ✅ TOKEN CONFIG
+const getAuthConfig = () => {
 
+  const token = localStorage.getItem("token");
+
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
+
+// ================= GET FEED =================
 export async function getFeed() {
-    const response = await api.get('/api/posts/feed')
-    return response.data
-    
+
+  const response = await api.get(
+    "/api/posts/feed",
+    getAuthConfig()
+  );
+
+  return response.data;
 }
 
+// ================= CREATE POST =================
+export async function createPost(
+  imageFile,
+  caption
+) {
 
-export async function createPost(imageFile, caption) {
-    const formData = new FormData()
+  const formData = new FormData();
 
-    formData.append("image", imageFile)
-    formData.append('caption', caption)
+  formData.append("image", imageFile);
 
-    const response = await api.post("/api/posts", formData)
+  formData.append("caption", caption);
 
-    return response.data
+  const response = await api.post(
+    "/api/posts",
+    formData,
+    getAuthConfig()
+  );
+
+  return response.data;
 }
 
+// ================= DELETE POST =================
 export async function deletePost(postId) {
-    console.log("DELETE API HIT:", postId)  // 👈 ADD THIS
-    const response = await api.delete("/api/posts/" + postId)
-    return response.data
+
+  const response = await api.delete(
+    "/api/posts/" + postId,
+    getAuthConfig()
+  );
+
+  return response.data;
 }
+
+// ================= LIKE POST =================
 export async function likePost(postId) {
-    console.log("POST ID:", postId)  
 
-    const response = await api.post("/api/posts/like/" + postId)
-    return response.data
+  const response = await api.post(
+    "/api/posts/like/" + postId,
+    {},
+    getAuthConfig()
+  );
+
+  return response.data;
 }
 
+// ================= UNLIKE POST =================
 export async function unLikePost(postId) {
-    const response = await api.post("/api/posts/unlike/" + postId)
-    return response.data
-}
-//  ADD COMMENT
-export async function addComment(postId, text) {
-    const response = await api.post("/api/posts/comment/" + postId, {
-        text
-    })
-    return response.data
+
+  const response = await api.post(
+    "/api/posts/unlike/" + postId,
+    {},
+    getAuthConfig()
+  );
+
+  return response.data;
 }
 
-//  GET COMMENTS
+// ================= ADD COMMENT =================
+export async function addComment(
+  postId,
+  text
+) {
+
+  const response = await api.post(
+    "/api/posts/comment/" + postId,
+    { text },
+    getAuthConfig()
+  );
+
+  return response.data;
+}
+
+// ================= GET COMMENTS =================
 export async function getComments(postId) {
-    const response = await api.get("/api/posts/comment/" + postId)
-    return response.data.comments
+
+  const response = await api.get(
+    "/api/posts/comment/" + postId,
+    getAuthConfig()
+  );
+
+  return response.data.comments;
 }
 
-//  delete comment
-
+// ================= DELETE COMMENT =================
 export async function deleteComment(commentId) {
-    const res = await api.delete("/api/posts/comment/" + commentId)
-    return res.data
+
+  const response = await api.delete(
+    "/api/posts/comment/" + commentId,
+    getAuthConfig()
+  );
+
+  return response.data;
 }
 
+// ================= USER PROFILE =================
 export async function getUserProfile(username) {
-    const res = await api.get("/api/posts/user/" + username)
-    return res.data
+
+  const response = await api.get(
+    "/api/posts/user/" + username,
+    getAuthConfig()
+  );
+
+  return response.data;
 }

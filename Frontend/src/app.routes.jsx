@@ -5,41 +5,58 @@ import Register from "./features/auth/pages/Register";
 import Feed from "./features/post/pages/Feed";
 import CreatePost from "./features/post/pages/CreatePost";
 import MainLayout from "./features/post/layouts/MainLayout";
-import Profile from "./features/post/pages/Profile"
+import Profile from "./features/post/pages/Profile";
 import Message from "./features/post/pages/Message";
+
+import ProtectedRoute from "./features/auth/components/ProtectedRoute";
+import PublicRoute from "./features/auth/components/PublicRoute";
+
 
 
 export const router = createBrowserRouter([
-  
-  {
-    path: "/login",
-    element: <Login />
-  },
-  {
-    path: "/register",
-    element: <Register />
-  },
 
+  // ✅ PUBLIC ROUTES (login/register)
   {
-    element: <MainLayout />,
+    element: <PublicRoute />,
     children: [
       {
-        path: "/",
-        element: <Feed />
+        path: "/login",
+        element: <Login />,
       },
       {
-        path: "/create-post",
-        element: <CreatePost />
+        path: "/register",
+        element: <Register />,
       },
-      {
-       path: "/profile/:username",
-       element: <Profile />
-      },
-      {
-        path: "/messages",
-        element: <Message />
-      }
-    ]
-  }
+    ],
+  },
 
+  // ✅ PROTECTED ROUTES
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <MainLayout />,
+        children: [
+          {
+            path: "/",
+            element: <Feed />,
+          },
+          {
+            path: "/create-post",
+            element: <CreatePost />,
+          },
+          {
+            path: "/profile/:username",
+            element: <Profile />,
+          },
+          {
+            path: "/messages",
+            element: <Message />,
+          },
+        ],
+      },
+    ],
+  },
 ]);
+
+

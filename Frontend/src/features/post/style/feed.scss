@@ -40,7 +40,7 @@
         .img-wrapper {
           padding: 2px;
           border-radius: 50%;
-          background: linear-gradient(45deg, #ff6a00, #ff00cc);
+          background: linear-gradient(45deg, #bd5a12, #ff00cc);
 
           img {
             width: 42px;
@@ -173,7 +173,7 @@
         border-radius: 12px;
 
         &:hover {
-          transform: none; // ❌ remove hover
+          transform: none; 
         }
 
         .user {
@@ -190,7 +190,7 @@
         }
 
         img {
-          height: auto;        // 🔥 FIX
+          height: auto;        
           max-height: 400px;
         }
 

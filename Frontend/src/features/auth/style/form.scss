@@ -1,44 +1,234 @@
 @mixin flex-column($gap: 0rem) {
-    display:flex;
-    flex-direction: column;
-    gap: $gap;
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a, #111827, #1e293b);
+  overflow-x: hidden;
 }
 
 main {
-    min-height: 400px;
-    width: 100%;
-
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
 }
+
+/* Background Glow */
+main::before,
+main::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: 0;
+}
+
+main::before {
+  background: rgba(255, 0, 85, 0.35);
+  top: -100px;
+  left: -80px;
+}
+
+main::after {
+  background: rgba(0, 195, 255, 0.3);
+  bottom: -100px;
+  right: -80px;
+}
+
 .form-container {
-    height: fit-content;
-    min-width: 400px;
+  position: relative;
+  z-index: 2;
 
-   @include flex-column(1rem);
+  width: 100%;
+  max-width: 430px;
+  padding: 2.5rem;
 
-    form{
-         @include flex-column(1rem);
+  border-radius: 2rem;
 
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 
-        input{
-            border: none;
-            outline: none;
-            padding-inline: 1.5rem;
-            padding-block: 1rem;
-            border-radius: 1rem;
-        }
+  border: 1px solid rgba(255, 255, 255, 0.15);
 
-       
-    }
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.35),
+    inset 0 0 1px rgba(255, 255, 255, 0.4);
 
-    .toggleAuthForm{
-        color: #bd0c23;
-        cursor: pointer;
-        text-decoration: none;
-    }
+  @include flex-column(1.5rem);
 
+  animation: fadeIn 0.7s ease;
+}
 
+/* Heading */
+.form-container h1 {
+  color: white;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.form-container p {
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: -0.7rem;
+}
+
+/* Form */
+.form-container form {
+  @include flex-column(1.2rem);
+}
+
+/* Inputs */
+.form-container form input {
+  width: 100%;
+  border: 1px solid transparent;
+  outline: none;
+
+  padding: 1rem 1.3rem;
+
+  border-radius: 1rem;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+
+  font-size: 0.95rem;
+
+  transition: 0.3s ease;
+}
+
+.form-container form input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.form-container form input:focus {
+  border-color: #ff2e63;
+  background: rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 0 0 4px rgba(255, 46, 99, 0.15),
+    0 0 18px rgba(255, 46, 99, 0.25);
+}
+
+/* Button */
+.form-container form button {
+  border: none;
+  outline: none;
+
+  padding: 1rem;
+
+  border-radius: 1rem;
+
+  background: linear-gradient(135deg, #ff2e63, #ff004c);
+
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.35s ease;
+
+  box-shadow: 0 8px 25px rgba(255, 0, 76, 0.35);
+}
+
+.form-container form button:hover {
+  transform: translateY(-3px) scale(1.01);
+
+  box-shadow: 0 14px 30px rgba(255, 0, 76, 0.45);
+}
+
+.form-container form button:active {
+  transform: scale(0.98);
+}
+
+/* Divider */
+.divider {
+  position: relative;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 38%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+/* Toggle Link */
+.toggleAuthForm {
+  color: #ff4d79;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.toggleAuthForm:hover {
+  color: white;
+  text-shadow: 0 0 12px rgba(255, 77, 121, 0.7);
+}
+
+/* Footer Text */
+.bottom-text {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92rem;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .form-container {
+    min-width: 100%;
+    padding: 2rem 1.4rem;
+    border-radius: 1.5rem;
+  }
+
+  .form-container h1 {
+    font-size: 1.7rem;
+  }
 }
