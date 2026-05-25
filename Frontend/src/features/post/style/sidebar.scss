@@ -277,3 +277,25 @@ input::placeholder {
   transform: scale(0.95);
   background: rgba(255,255,255,0.06);
 }
+
+// Sidebar ke andar sabse niche stick karne ke liye
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;  // ✅ yeh add karo
+}
+
+// Logout style
+.logout {
+  margin-bottom: 8px;
+  
+  svg {
+    color: $text !important;
+  }
+}
+
+// Mobile mein logout show karo
+.nav-item.logout {
+  display: flex !important;
+}

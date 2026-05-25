@@ -3,10 +3,12 @@ import axios from "axios";
 // ================= AXIOS INSTANCES =================
 const authApi = axios.create({
     baseURL: "http://localhost:3000/api/auth",
+    withCredentials: true
 });
 
 const userApi = axios.create({
     baseURL: "http://localhost:3000/api/users",
+    withCredentials: true
 });
 
 // ================= TOKEN ATTACH =================

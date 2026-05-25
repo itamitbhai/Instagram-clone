@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken")
 const userModel = require("../models/user.model")
 
 async function identifyUser(req, res, next) {
-    const token = req.cookies?.token;
+    const token = req.cookies?.token || 
+                  req.headers?.authorization?.split(" ")[1];
 
     if (!token) {
         return res.status(401).json({
@@ -25,7 +26,7 @@ async function identifyUser(req, res, next) {
             })
         }
 
-        req.user = user   // ✅ FULL USER OBJECT
+        req.user = user   
 
         next()
 

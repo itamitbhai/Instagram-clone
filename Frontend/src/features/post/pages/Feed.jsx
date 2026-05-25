@@ -10,16 +10,19 @@ const Feed = () => {
 
 
     const {feed, handleGetFeed, loading, handleLike, handleUnLike, handleDeletePost} = usePost()
-    const { user: currentUser } = useAuth()
+    const { user: currentUser, checkedAuth } = useAuth()
     useEffect(() => {
+
+      if(!checkedAuth) return
+
        if (!currentUser) {
       navigate("/login");
       return;
     }
         handleGetFeed()
-    }, [currentUser])
+    }, [currentUser, checkedAuth])
 
-    if(loading || !feed){
+    if(!checkedAuth || loading || !feed){
         return (<main><h1>Feed is Loading....</h1></main>)
     }
 

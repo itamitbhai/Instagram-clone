@@ -74,7 +74,7 @@ const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
                         }}
                     >
                         <svg
-                            className={post.isLiked ? "like" : ""}
+                            className={post.isLiked ? "liked" : ""}
                             xmlns="http://www.w3.org/2000/svg" 
                             viewBox="0 0 24 24" 
                             fill="currentColor"

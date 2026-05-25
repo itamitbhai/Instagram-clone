@@ -73,13 +73,13 @@ export const useAuth = () => {
 
       console.log("LOGIN RESPONSE:", res);
 
-      // ✅ TOKEN SAVE
+      //TOKEN SAVE
       localStorage.setItem(
         "token",
         res.token
       );
 
-      // ✅ USER SAVE
+      // USER SAVE
       setUser(res.user);
 
       return true;

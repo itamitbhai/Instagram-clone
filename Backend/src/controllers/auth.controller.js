@@ -115,6 +115,7 @@
 
     res.status(200).json({
         message: "LoginIN succesfully",
+        token: token,  
         user: {
             _id: user._id,
             username:user.username,
