@@ -1,13 +1,14 @@
 import axios from "axios";
+import { API_BASE_URL } from "../../../config";
 
 // ================= AXIOS INSTANCES =================
 const authApi = axios.create({
-    baseURL: "http://localhost:3000/api/auth",
+    baseURL: `${API_BASE_URL}/api/auth`,
     withCredentials: true
 });
 
 const userApi = axios.create({
-    baseURL: "http://localhost:3000/api/users",
+    baseURL: `${API_BASE_URL}/api/users`,
     withCredentials: true
 });
 

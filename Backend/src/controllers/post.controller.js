@@ -236,7 +236,6 @@ async function unLikePostController(req, res) {
 async function getFeedController(req, res) {
     const user = req.user
 
-
     const posts = await Promise.all((await postModel.find({}).sort({_id: -1}).populate("user").lean())
        .map(async (post) => {
 
@@ -249,6 +248,10 @@ async function getFeedController(req, res) {
             post:post._id
         })
         post.isLiked = Boolean(isLiked)
+
+        // ✅ Fetch all likes for this post to calculate feed like count
+        const likes = await likeModel.find({ post: post._id }).select("user")
+        post.likes = likes
 
         return post
        }))

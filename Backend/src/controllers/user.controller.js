@@ -175,9 +175,29 @@ async function updateProfileController(req, res) {
         })
     }
 }
+
+// ✅ SEARCH USERS
+async function searchUsersController(req, res) {
+    try {
+        const query = req.query.q;
+        if (!query) {
+            return res.status(200).json({ users: [] });
+        }
+        const users = await userModel.find({
+            username: { $regex: query, $options: "i" }
+        }).select("username profileImage bio").limit(10);
+        
+        res.status(200).json({ users });
+    } catch (err) {
+        console.log("SEARCH ERROR:", err);
+        res.status(500).json({ message: err.message });
+    }
+}
+
 module.exports = {
     followUserController,
     unfollowUserController,
     respondToFollowController,
-    updateProfileController
+    updateProfileController,
+    searchUsersController
 }

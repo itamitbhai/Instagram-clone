@@ -6,8 +6,9 @@ import {
 import { useContext, useRef } from "react"
 import { PostContext } from "../post.context"
 import { io } from "socket.io-client"
+import { API_BASE_URL } from "../../../config"
 
-const SOCKET_URL = "http://localhost:3000"
+const SOCKET_URL = API_BASE_URL
 let socketInstance = null
 
 export const usePost = (currentUser) => {
@@ -63,7 +64,10 @@ export const usePost = (currentUser) => {
                 if (p._id === postId) {
                     // ✅ notification — post owner ko
                     notify(p.user?._id, "like", postId)
-                    return { ...p, isLiked: true }
+                    // Add local user to likes array if not already present
+                    const hasLiked = p.likes?.some(l => l.user === currentUser?.username)
+                    const updatedLikes = hasLiked ? (p.likes || []) : [...(p.likes || []), { user: currentUser?.username }]
+                    return { ...p, isLiked: true, likes: updatedLikes }
                 }
                 return p
             }))
@@ -77,7 +81,11 @@ export const usePost = (currentUser) => {
         try {
             await unLikePost(postId)
             setFeed(prev => prev.map(p =>
-                p._id === postId ? { ...p, isLiked: false } : p
+                p._id === postId ? { 
+                    ...p, 
+                    isLiked: false, 
+                    likes: (p.likes || []).filter(l => l.user !== currentUser?.username) 
+                } : p
             ))
         } catch (error) {
             console.log("UNLIKE ERROR:", error)

@@ -1,20 +1,28 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import gsap from "gsap"
 import "../style/post.scss"
 import DeletePost from "../pages/DeletePost"
 import Comments from "../components/Comment"
 import { useNavigate } from "react-router-dom"
 
 const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
-
+    const postRef = useRef(null);
     const [showDelete, setShowDelete]     = useState(false)
     const [showComments, setShowComments] = useState(false)
     const [animate, setAnimate]           = useState(false)
     const [isLiked, setIsLiked]           = useState(post?.isLiked ?? false)
 
     useEffect(() => {
-        console.log("useEffect chala — isLiked:", post?.isLiked)
         setIsLiked(post?.isLiked ?? false)
     }, [post?.isLiked])
+
+    // Smooth Entrance animation when post mounts
+    useEffect(() => {
+        gsap.fromTo(postRef.current,
+            { opacity: 0, y: 40, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out", clearProps: "transform" }
+        )
+    }, [])
 
     const navigate = useNavigate()
 
@@ -27,7 +35,15 @@ const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
         setAnimate(true)
         setTimeout(() => setAnimate(false), 300)
 
-        //post.isLiked NAHI — isLiked local state use karo
+        // GSAP Heart pop animation
+        const heartSvg = postRef.current?.querySelector(".Like svg");
+        if (heartSvg) {
+            gsap.fromTo(heartSvg,
+                { scale: 1 },
+                { scale: 1.4, duration: 0.15, yoyo: true, repeat: 1, ease: "back.out(1.7)" }
+            );
+        }
+
         if (isLiked) {
             setIsLiked(false)
             handleUnLike(post._id)
@@ -40,7 +56,7 @@ const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
     if (!post) return null
 
     return (
-        <div className="post" onClick={handlePostClick}>
+        <div ref={postRef} className="post" onClick={handlePostClick}>
 
             {showDelete && (
                 <div className="deletePopup" onClick={(e) => e.stopPropagation()}>
@@ -60,7 +76,14 @@ const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
                         navigate(`/profile/${user?.username}`)
                     }}
                 >
-                    <img src={user?.profileImage || "/default.png"} alt="" />
+                    <img 
+                        src={user?.profileImage || "https://ik.imagekit.io/nruucogyj/images.jpeg"} 
+                        alt="" 
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://ik.imagekit.io/nruucogyj/images.jpeg";
+                        }}
+                    />
                 </div>
 
                 <p
@@ -90,8 +113,10 @@ const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
                             style={{
-                                fill: isLiked ? "red" : "white",  // ✅ isLiked local state
-                                transition: "fill 0.2s ease",
+                                fill: isLiked ? "#ff3040" : "transparent",
+                                stroke: isLiked ? "#ff3040" : "#ffffff",
+                                strokeWidth: isLiked ? "0" : "2",
+                                transition: "fill 0.2s ease, stroke 0.2s ease",
                                 width: "24px",
                                 height: "24px",
                             }}
@@ -112,7 +137,14 @@ const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
                             className={showComments ? "active" : ""}
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
-                            fill="currentColor"
+                            style={{
+                                fill: "transparent",
+                                stroke: "#ffffff",
+                                strokeWidth: "2",
+                                transition: "all 0.2s ease",
+                                width: "24px",
+                                height: "24px",
+                            }}
                         >
                             <path d="M5.76282 17H20V5H4V18.3851L5.76282 17ZM6.45455 19L2 22.5V4C2 3.44772 2.44772 3 3 3H21C21.5523 3 22 3.44772 22 4V18C22 18.5523 21.5523 19 21 19H6.45455Z" />
                         </svg>

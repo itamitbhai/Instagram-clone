@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react"
 import { io } from "socket.io-client"
+import { API_BASE_URL } from "../../../config"
 
-const SOCKET_URL = "http://localhost:3000"
+const SOCKET_URL = API_BASE_URL
 
 export const useNotification = (userId) => {
 

@@ -2,16 +2,17 @@ import React from "react";
 import { useAuth } from "../../auth/hooks/useAuth";
 import {
   Home, Search, Compass, PlusSquare,
-  User, MessageCircle, PlayCircle, LogOut
+  User, MessageCircle, PlayCircle, LogOut, Heart
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useNotification } from "../hook/useNotification";
 import "../style/sidebar.scss";
-import Notification from "./Notification";
 
-const Sidebar = () => {
+const Sidebar = ({ isSearchOpen, toggleSearch, isNotificationOpen, toggleNotifications }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, handleLogout } = useAuth();
+  const { unreadCount } = useNotification(user?._id);
 
   const handleMessages = async () => {
     navigate("/messages");
@@ -33,16 +34,28 @@ const Sidebar = () => {
 
       <div className="nav-links">
         <NavItem icon={<Home />} text="Home" active={location.pathname === "/"} onClick={() => navigate("/")} className="mobile-show" />
-        <NavItem icon={<Search />} text="Search" className="mobile-show" />
+        <NavItem icon={<Search />} text="Search" active={isSearchOpen} onClick={toggleSearch} className="mobile-show" />
         <NavItem icon={<Compass />} text="Explore" />
         <NavItem icon={<PlayCircle />} text="Reels" className="mobile-show" />
         <NavItem icon={<MessageCircle />} text="Messages" active={location.pathname === "/messages"} onClick={handleMessages} className="mobile-show" />
 
-        {/* Notifications — desktop only */}
-        <div className="nav-item mobile-hide notification-item">
-          <Notification userId={user?._id} />
-          <span>Notifications</span>
-        </div>
+        {/* Notifications — desktop and mobile */}
+        <NavItem 
+          icon={
+            <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+              <Heart style={{ fill: isNotificationOpen ? "#ff3040" : "transparent", stroke: isNotificationOpen ? "#ff3040" : "#ffffff" }} />
+              {unreadCount > 0 && (
+                <span className="notif-badge-bubble">
+                  {unreadCount}
+                </span>
+              )}
+            </div>
+          } 
+          text="Notifications" 
+          active={isNotificationOpen}
+          onClick={toggleNotifications}
+          className="mobile-show"
+        />
 
         <NavItem icon={<PlusSquare />} text="Create" onClick={() => navigate("/create-post")} />
 

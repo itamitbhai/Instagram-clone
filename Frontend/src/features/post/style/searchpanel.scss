@@ -1,0 +1,193 @@
+$bg: #000000;
+$bg-elevated: #0f0f0f;
+$border: #262626;
+$text: #f5f5f5;
+$text-muted: #a8a8a8;
+$hover: #1c1c1c;
+$accent: #0095f6;
+
+/* Backdrop overlay */
+.search-panel-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 95;
+}
+
+/* Sliding Drawer Panel */
+.search-panel {
+  position: fixed;
+  top: 0;
+  left: 72px; /* Next to desktop collapsed sidebar */
+  width: 380px;
+  height: 100vh;
+  background: $bg-elevated;
+  border-right: 1px solid $border;
+  z-index: 100;
+  box-shadow: 15px 0 30px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  box-sizing: border-box;
+
+  .search-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: $text;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: $text-muted;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+
+      &:hover {
+        background: $hover;
+        color: $text;
+      }
+    }
+  }
+
+  .search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: #1c1c1e;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 24px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+
+    &:focus-within {
+      border-color: #363636;
+    }
+
+    .search-icon {
+      color: $text-muted;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: $text;
+      font-size: 15px;
+      width: 100%;
+
+      &::placeholder {
+        color: $text-muted;
+      }
+    }
+
+    .spinner {
+      animation: rotate 1.5s linear infinite;
+      color: $text-muted;
+      margin-left: 10px;
+      flex-shrink: 0;
+    }
+  }
+
+  .search-results-container {
+    flex: 1;
+    overflow-y: auto;
+
+    .no-results {
+      text-align: center;
+      color: $text-muted;
+      font-size: 14px;
+      margin-top: 40px;
+    }
+
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: $hover;
+      }
+
+      .result-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid $border;
+      }
+
+      .result-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .result-username {
+          font-size: 14px;
+          font-weight: 600;
+          color: $text;
+        }
+
+        .result-bio {
+          font-size: 12px;
+          color: $text-muted;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 250px;
+        }
+      }
+    }
+  }
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive mobile mode */
+@media (max-width: 767px) {
+  .search-panel {
+    left: 0;
+    width: 100%;
+    height: 90vh;
+    top: auto;
+    bottom: 0;
+    border-right: none;
+    border-top: 1px solid $border;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8);
+    z-index: 1100;
+  }
+}

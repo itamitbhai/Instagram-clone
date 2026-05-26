@@ -9,8 +9,8 @@ const Feed = () => {
   const navigate = useNavigate();
 
 
-    const {feed, handleGetFeed, loading, handleLike, handleUnLike, handleDeletePost} = usePost()
     const { user: currentUser, checkedAuth } = useAuth()
+    const {feed, handleGetFeed, loading, handleLike, handleUnLike, handleDeletePost} = usePost(currentUser)
     useEffect(() => {
 
       if(!checkedAuth) return

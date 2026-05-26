@@ -29,6 +29,9 @@ userRouter.post("/unfollow/:username", identifyUser, userController.unfollowUser
  */
 userRouter.post("/follow/respond/:username", identifyUser, userController.respondToFollowController)
 
+// ✅ SEARCH USERS (GET /api/users/search?q=...)
+userRouter.get("/search", identifyUser, userController.searchUsersController)
+
 userRouter.put(
   "/edit",
   identifyUser,

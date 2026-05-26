@@ -28,13 +28,15 @@ a {
   text-decoration: none;
 }
 
-svg {
-  stroke: currentColor !important;
-  fill: none !important;
-}
+.sidebar {
+  svg {
+    stroke: currentColor !important;
+    fill: none !important;
+  }
 
-svg path {
-  fill: currentColor !important;
+  svg path {
+    fill: currentColor !important;
+  }
 }
 
 input, textarea {
@@ -299,4 +301,24 @@ input::placeholder {
     border-top: 1px solid $border;
     padding: 8px;
   }
+}
+
+.notif-badge-bubble {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ff3040;
+  color: #fff !important;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #000;
+  padding: 0 2px;
+  box-sizing: border-box;
+  z-index: 10;
 }

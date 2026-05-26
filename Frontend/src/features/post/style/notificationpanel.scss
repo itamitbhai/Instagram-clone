@@ -1,0 +1,218 @@
+$bg: #000000;
+$bg-elevated: #0f0f0f;
+$border: #262626;
+$text: #f5f5f5;
+$text-muted: #a8a8a8;
+$hover: #1c1c1c;
+$accent: #0095f6;
+
+/* Backdrop overlay */
+.notification-panel-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 95;
+}
+
+/* Sliding Drawer Panel */
+.notification-panel {
+  position: fixed;
+  top: 0;
+  left: 72px; /* Next to desktop collapsed sidebar */
+  width: 380px;
+  height: 100vh;
+  background: $bg-elevated;
+  border-right: 1px solid $border;
+  z-index: 100;
+  box-shadow: 15px 0 30px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  box-sizing: border-box;
+
+  .notification-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: $text;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: $text-muted;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+
+      &:hover {
+        background: $hover;
+        color: $text;
+      }
+    }
+  }
+
+  .notification-list-container {
+    flex: 1;
+    overflow-y: auto;
+
+    .no-notifications {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      margin-top: 60px;
+
+      .heart-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 2px solid $border;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        color: $text-muted;
+      }
+
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: $text;
+        margin-bottom: 8px;
+      }
+
+      p {
+        font-size: 14px;
+        color: $text-muted;
+        line-height: 1.4;
+      }
+    }
+
+    .notifications-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .notification-item-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      position: relative;
+      transition: background 0.2s, border-color 0.2s;
+
+      &:hover {
+        background: $hover;
+        border-color: rgba(255, 255, 255, 0.06);
+
+        .notif-item-close {
+          opacity: 1;
+        }
+      }
+
+      &.unread {
+        border-left: 3px solid $accent;
+        background: rgba(0, 149, 246, 0.05);
+      }
+
+      .notif-avatar-wrapper {
+        position: relative;
+        flex-shrink: 0;
+
+        .notif-icon-badge {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.05);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid $border;
+        }
+      }
+
+      .notification-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .notif-text {
+          font-size: 13.5px;
+          color: $text;
+          line-height: 1.35;
+          margin: 0;
+
+          .notif-username {
+            font-weight: 600;
+            color: $text;
+          }
+
+          .notif-desc {
+            color: #ddd;
+          }
+        }
+
+        .notif-time {
+          font-size: 11px;
+          color: $text-muted;
+        }
+      }
+
+      .notif-item-close {
+        background: none;
+        border: none;
+        color: $text-muted;
+        cursor: pointer;
+        padding: 4px;
+        opacity: 0;
+        transition: opacity 0.2s, color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          color: #ff3040;
+        }
+      }
+    }
+  }
+}
+
+/* Mobile responsive drawer */
+@media (max-width: 767px) {
+  .notification-panel {
+    left: 0;
+    width: 100%;
+    height: 90vh;
+    top: auto;
+    bottom: 0;
+    border-right: none;
+    border-top: 1px solid $border;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8);
+    z-index: 1100;
+  }
+}
