@@ -1,0 +1,152 @@
+.notification-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* BELL BUTTON */
+.bell-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+
+  &:hover svg {
+    color: #a8a8a8;
+  }
+}
+
+/* UNREAD BADGE */
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* DROPDOWN */
+.notification-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 320px;
+  background: #1a1a1a;
+  border: 1px solid #262626;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* HEADER */
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #262626;
+
+  h4 {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: #a8a8a8;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover {
+      color: #fff;
+    }
+  }
+}
+
+/* EMPTY */
+.empty {
+  text-align: center;
+  color: #555;
+  padding: 24px;
+  font-size: 14px;
+}
+
+/* LIST */
+ul {
+  list-style: none;
+  max-height: 360px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+  }
+}
+
+/* SINGLE NOTIFICATION */
+.notif-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #1f1f1f;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #222;
+  }
+
+  &.unread {
+    background: #111;
+    border-left: 3px solid #0095f6;
+  }
+
+  &.read {
+    opacity: 0.7;
+  }
+}
+
+.notif-text {
+  flex: 1;
+  font-size: 13px;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.notif-time {
+  font-size: 11px;
+  color: #555;
+  white-space: nowrap;
+}
+
+.notif-close {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+
+  &:hover {
+    color: #fff;
+  }
+}

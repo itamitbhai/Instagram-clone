@@ -1,4 +1,3 @@
-
 * {
   margin: 0;
   padding: 0;
@@ -9,16 +8,14 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  overflow-x: hidden; // 🔥 prevent horizontal gap
+  overflow-x: hidden;
 }
 
-/* WRAPPER */
 .postWrapper {
   width: 100%;
-  display: block; // 🔥 remove flex centering (main fix)
+  display: block;
 }
 
-/* POST */
 .post {
   width: 100%;
   max-width: 470px;
@@ -26,114 +23,138 @@ html, body {
   border-bottom: 1px solid #262626;
   color: #fff;
   position: relative;
-  margin: 0; // 🔥 no auto margin
+  margin: 0;
+
+  .postImg {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
 }
 
-/* ================= USER ================= */
 .user {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
   padding: 10px;
+  cursor: pointer;
 
-  .left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-
+  .img-wrapper {
     img {
       width: 32px;
       height: 32px;
       border-radius: 50%;
-    }
-
-    span {
-      font-size: 14px;
-      font-weight: 600;
+      object-fit: cover;
     }
   }
 
-  .moreBtn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
+  p {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
   }
 }
 
-/* ================= IMAGE ================= */
-.imgContainer {
-  width: 100%;
-
-  img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    display: block; // 🔥 removes image gap
-  }
-}
-
-/* ================= ACTIONS ================= */
-.actions {
+.icons {
   padding: 8px 10px;
 
   .left {
     display: flex;
     gap: 15px;
+    align-items: center;
   }
 
   button {
     background: none;
     border: none;
     cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     svg {
       width: 24px;
       height: 24px;
-      fill: white;
+      transition: transform 0.15s ease, fill 0.2s ease;
     }
 
-   svg.liked {
-  fill: red;
-}
+    svg.active {
+      fill: #0095f6;
+    }
+  }
+
+  .Like.bounce svg {
+    animation: heartBounce 0.3s ease;
   }
 }
 
-/* ================= CAPTION ================= */
-.caption {
-  padding: 0 10px 10px;
+@keyframes heartBounce {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.likeCount {
+  padding: 0 10px 4px;
   font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
 
-  .username {
-    font-weight: 600;
-    margin-right: 5px;
+.bottom {
+  padding: 0 10px 10px;
+
+  .caption {
+    font-size: 14px;
+    color: #fff;
+    line-height: 1.5;
+
+    .captionUsername {
+      font-weight: 700;
+      margin-right: 5px;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
 
-/* ================= COMMENTS ================= */
-.comments {
-  border-top: 1px solid #262626;
-  padding: 10px;
-}
-
-/* ================= DELETE ================= */
 .deletePopup {
   position: absolute;
   top: 40px;
   right: 10px;
   background: #1a1a1a;
+  border: 1px solid #262626;
   border-radius: 8px;
-  padding: 10px;
+  padding: 8px;
   z-index: 10;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+
+  button {
+    background: none;
+    border: none;
+    color: red;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 4px;
+    width: 100%;
+    text-align: left;
+
+    &:hover {
+      background: #262626;
+    }
+  }
 }
 
-/* ================= DESKTOP CENTER (LIKE INSTAGRAM) ================= */
 @media (min-width: 768px) {
   .postWrapper {
     display: flex;
-    justify-content: center; // ✅ only desktop center
+    justify-content: center;
   }
 
   .post {
@@ -141,26 +162,24 @@ html, body {
   }
 }
 
-/* ================= MOBILE ================= */
 @media (max-width: 768px) {
   .post {
     width: 100%;
     max-width: 100%;
   }
 
-  .actions svg {
+  .icons svg {
     width: 22px;
     height: 22px;
   }
 
-  .caption {
+  .bottom .caption {
     font-size: 13px;
   }
 }
 
-/* EXTRA SMALL */
 @media (max-width: 400px) {
-  .caption {
+  .bottom .caption {
     font-size: 12px;
   }
 }

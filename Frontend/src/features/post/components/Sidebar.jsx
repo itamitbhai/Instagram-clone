@@ -1,24 +1,17 @@
 import React from "react";
 import { useAuth } from "../../auth/hooks/useAuth";
 import {
-  Home,
-  Search,
-  Compass,
-  Heart,
-  PlusSquare,
-  User,
-  MessageCircle,
-  PlayCircle,
-  LogOut  // ✅ add karo
+  Home, Search, Compass, PlusSquare,
+  User, MessageCircle, PlayCircle, LogOut
 } from "lucide-react";
-
 import { useNavigate, useLocation } from "react-router-dom";
 import "../style/sidebar.scss";
+import Notification from "./Notification";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, handleLogout } = useAuth();  // ✅ handleLogout lo
+  const { user, handleLogout } = useAuth();
 
   const handleMessages = async () => {
     navigate("/messages");
@@ -34,57 +27,39 @@ const Sidebar = () => {
     }
   };
 
-  const menuItems = [
-    { icon: <Home />, text: "Home", path: "/" },
-    { icon: <Search />, text: "Search" },
-    { icon: <Compass />, text: "Explore" },
-    { icon: <PlayCircle />, text: "Reels" },
-    { icon: <MessageCircle />, text: "Messages", action: handleMessages, path: "/messages" },
-    { icon: <Heart />, text: "Notifications" },
-    { icon: <PlusSquare />, text: "Create", action: () => navigate("/create-post") },
-    {
-      icon: <User />,
-      text: "Profile",
-      action: () => { if (!user?.username) return; navigate(`/profile/${user.username}`); },
-      isProfile: true
-    }
-  ];
-
   return (
     <div className="sidebar">
       <div className="logo">Insta</div>
 
       <div className="nav-links">
-        {menuItems.map((item, i) => {
-          const isActive = item.path
-            ? location.pathname === item.path
-            : item.isProfile
-            ? location.pathname.includes("/profile")
-            : false;
+        <NavItem icon={<Home />} text="Home" active={location.pathname === "/"} onClick={() => navigate("/")} className="mobile-show" />
+        <NavItem icon={<Search />} text="Search" className="mobile-show" />
+        <NavItem icon={<Compass />} text="Explore" />
+        <NavItem icon={<PlayCircle />} text="Reels" className="mobile-show" />
+        <NavItem icon={<MessageCircle />} text="Messages" active={location.pathname === "/messages"} onClick={handleMessages} className="mobile-show" />
 
-          return (
-            <NavItem
-              key={i}
-              icon={item.icon}
-              text={item.text}
-              active={isActive}
-              onClick={
-                item.action ? item.action
-                : item.path ? () => navigate(item.path)
-                : undefined
-              }
-            />
-          );
-        })}
+        {/* Notifications — desktop only */}
+        <div className="nav-item mobile-hide notification-item">
+          <Notification userId={user?._id} />
+          <span>Notifications</span>
+        </div>
+
+        <NavItem icon={<PlusSquare />} text="Create" onClick={() => navigate("/create-post")} />
+
+        {/* Profile — sabse neeche, mobile mein bhi show */}
+        <NavItem
+          icon={<User />}
+          text="Profile"
+          active={location.pathname.includes("/profile")}
+          onClick={() => { if (!user?.username) return; navigate(`/profile/${user.username}`); }}
+          className="mobile-show profile-item"
+        />
       </div>
 
-      {/* ✅ Logout button sabse niche */}
+      {/* Logout — desktop sidebar bottom, mobile hide */}
       <div
-        className="nav-item logout"
-        onClick={() => {
-          handleLogout();
-          navigate("/login");
-        }}
+        className="nav-item logout mobile-hide"
+        onClick={() => { handleLogout(); navigate("/login"); }}
       >
         <LogOut />
         <span>Logout</span>
@@ -93,19 +68,14 @@ const Sidebar = () => {
   );
 };
 
-const NavItem = ({ icon, text, active, onClick }) => {
-  return (
-    <div
-      className={`nav-item ${active ? "active" : ""}`}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (onClick) onClick();
-      }}
-    >
-      {icon}
-      <span>{text}</span>
-    </div>
-  );
-};
+const NavItem = ({ icon, text, active, onClick, className = "" }) => (
+  <div
+    className={`nav-item ${active ? "active" : ""} ${className}`}
+    onClick={(e) => { e.stopPropagation(); if (onClick) onClick(); }}
+  >
+    {icon}
+    <span>{text}</span>
+  </div>
+);
 
 export default Sidebar;

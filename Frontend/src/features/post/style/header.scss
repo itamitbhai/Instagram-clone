@@ -1,0 +1,56 @@
+$bg: #000000;
+$border: #262626;
+$text: #f5f5f5;
+$hover: #1a1a1a;
+
+/* Desktop mein hide */
+.mobile-header {
+  display: none;
+}
+
+/* Mobile mein show */
+@media (max-width: 767px) {
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 52px;
+    background: $bg;
+    border-bottom: 1px solid $border;
+    padding: 0 16px;
+    z-index: 1000;
+
+    &__logo {
+      font-size: 22px;
+      font-weight: 600;
+      color: $text !important;
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    &__logout {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      &:hover {
+        background: $hover;
+      }
+    }
+  }
+}

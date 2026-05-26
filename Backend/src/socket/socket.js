@@ -4,13 +4,13 @@ const socketHandler = (io) => {
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
-    //  add user
+    // add user
     socket.on("addUser", (userId) => {
       onlineUsers[userId] = socket.id;
       console.log("Online Users:", onlineUsers);
     });
 
-    //  FIXED sendMessage
+    // sendMessage
     socket.on("sendMessage", (data) => {
       const receiverSocket = onlineUsers[data.receiverId];
 
@@ -26,7 +26,24 @@ const socketHandler = (io) => {
       }
     });
 
-    //  disconnect
+    // ✅ NOTIFICATION — like, follow, comment
+    socket.on("sendNotification", (data) => {
+      // data = { receiverId, senderId, senderUsername, type, postId? }
+      const receiverSocket = onlineUsers[data.receiverId];
+
+      if (receiverSocket) {
+        io.to(receiverSocket).emit("getNotification", {
+          senderId:       data.senderId,
+          senderUsername: data.senderUsername,
+          type:           data.type,       // "like" | "follow" | "comment" | "message"
+          postId:         data.postId || null,
+          createdAt:      new Date(),
+          isRead:         false,
+        });
+      }
+    });
+
+    // disconnect
     socket.on("disconnect", () => {
       for (let userId in onlineUsers) {
         if (onlineUsers[userId] === socket.id) {

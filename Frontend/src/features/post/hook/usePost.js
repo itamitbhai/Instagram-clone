@@ -1,24 +1,45 @@
 import { 
-    getFeed, 
-    createPost, 
-    likePost, 
-    unLikePost, 
-    deletePost,
-    addComment,
-    getComments,
-    deleteComment
+    getFeed, createPost, likePost, unLikePost, 
+    deletePost, addComment, getComments, deleteComment
 } from "../services/post.api"
 
-import { useContext } from "react"
+import { useContext, useRef } from "react"
 import { PostContext } from "../post.context"
+import { io } from "socket.io-client"
 
-export const usePost = () => {
+const SOCKET_URL = "http://localhost:3000"
+let socketInstance = null
+
+export const usePost = (currentUser) => {
+    // currentUser = { _id, username } — parent se pass karo
 
     const context = useContext(PostContext)
-
     const { loading, setLoading, post, setPost, feed, setFeed } = context
 
-    //  FEED
+    // socket reuse
+    const getSocket = () => {
+        if (!socketInstance) {
+            socketInstance = io(SOCKET_URL, { withCredentials: true })
+            if (currentUser?._id) {
+                socketInstance.emit("addUser", currentUser._id)
+            }
+        }
+        return socketInstance
+    }
+
+    // ✅ notification helper
+    const notify = (receiverId, type, postId = null) => {
+        if (!receiverId || receiverId === currentUser?._id) return // khud ko notify mat karo
+        getSocket().emit("sendNotification", {
+            receiverId,
+            senderId:       currentUser?._id,
+            senderUsername: currentUser?.username,
+            type,
+            postId,
+        })
+    }
+
+    // FEED
     const handleGetFeed = async () => {
         setLoading(true)
         const data = await getFeed()
@@ -26,7 +47,7 @@ export const usePost = () => {
         setLoading(false)
     }
 
-    //  CREATE POST
+    // CREATE POST
     const handleCreatePost = async (imageFile, caption) => {
         setLoading(true)
         const data = await createPost(imageFile, caption)
@@ -34,19 +55,36 @@ export const usePost = () => {
         setLoading(false)
     }
 
-    //  LIKE
+    // ✅ LIKE — notification bhejo post owner ko
     const handleLike = async (postId) => {
-        await likePost(postId)
-        await handleGetFeed()
+        try {
+            await likePost(postId)
+            setFeed(prev => prev.map(p => {
+                if (p._id === postId) {
+                    // ✅ notification — post owner ko
+                    notify(p.user?._id, "like", postId)
+                    return { ...p, isLiked: true }
+                }
+                return p
+            }))
+        } catch (error) {
+            console.log("LIKE ERROR:", error)
+        }
     }
 
-    //  UNLIKE
+    // ✅ UNLIKE
     const handleUnLike = async (postId) => {
-        await unLikePost(postId)
-        await handleGetFeed()
+        try {
+            await unLikePost(postId)
+            setFeed(prev => prev.map(p =>
+                p._id === postId ? { ...p, isLiked: false } : p
+            ))
+        } catch (error) {
+            console.log("UNLIKE ERROR:", error)
+        }
     }
 
-    //  DELETE
+    // DELETE
     const handleDeletePost = async (postId) => {
         try {
             setLoading(true)
@@ -59,17 +97,20 @@ export const usePost = () => {
         }
     }
 
-    // 💬 ADD COMMENT
+    // ✅ ADD COMMENT — notification bhejo
     const handleAddComment = async (postId, text) => {
         try {
             const res = await addComment(postId, text)
-            return res.comment   // 👈 component ko return karo
+            // post owner ko notify karo
+            const targetPost = feed.find(p => p._id === postId)
+            notify(targetPost?.user?._id, "comment", postId)
+            return res.comment
         } catch (error) {
             console.log(error)
         }
     }
 
-    // 📥 GET COMMENTS
+    // GET COMMENTS
     const handleGetComments = async (postId) => {
         try {
             const comments = await getComments(postId)
@@ -80,8 +121,8 @@ export const usePost = () => {
         }
     }
 
-
-      const handleDeleteComment = async (commentId) => {
+    // DELETE COMMENT
+    const handleDeleteComment = async (commentId) => {
         try {
             await deleteComment(commentId)
             return true
@@ -91,18 +132,10 @@ export const usePost = () => {
         }
     }
 
-
     return { 
-        loading, 
-        feed, 
-        post, 
-        handleGetFeed, 
-        handleCreatePost, 
-        handleLike, 
-        handleUnLike,
-        handleDeletePost,
-        handleAddComment,     
-        handleGetComments,
-        handleDeleteComment     
-    }  
+        loading, feed, post,
+        handleGetFeed, handleCreatePost,
+        handleLike, handleUnLike, handleDeletePost,
+        handleAddComment, handleGetComments, handleDeleteComment
+    }
 }

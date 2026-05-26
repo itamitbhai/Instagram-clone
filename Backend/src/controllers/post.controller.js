@@ -118,42 +118,7 @@ async function getPostDetailsController(req, res) {
 
 }
 
-// async function likePostController(req, res) {
-//     const username= req.user?.username
-//     const postId = req.params.postId
 
-//     const post = await postModel.findById(postId)
-
-//     if(!post) {
-//         return res.status(404).json({
-//             message: "Post not Found"
-//         })
-//     }
-
-//       const existingLike = await likeModel.findOne({
-//       post: postId,
-//       user: username
-//     })
-
-//     if (existingLike) {
-//       return res.status(400).json({
-//         message: "Already liked"
-//       })
-//     }
-
-//     const like = await likeModel.create({
-//         post: postId,
-//         user: username
-//     })
-
-//     res.status(201).json({
-//         message: "Post liked Succesfully",
-//         like
-//     })
-
-    
-
-// }
 async function likePostController(req, res) {
     try {
         const username = req.user?.username;
