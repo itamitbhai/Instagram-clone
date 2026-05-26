@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useNotification } from "../hook/useNotification";
+import { API_BASE_URL } from "../../../config";
 import "../style/sidebar.scss";
 
 const Sidebar = ({ isSearchOpen, toggleSearch, isNotificationOpen, toggleNotifications }) => {
@@ -18,7 +19,7 @@ const Sidebar = ({ isSearchOpen, toggleSearch, isNotificationOpen, toggleNotific
     navigate("/messages");
     try {
       if (!user?._id) return;
-      const res = await fetch(`http://localhost:3000/api/conversations/${user._id}`);
+      const res = await fetch(`${API_BASE_URL}/api/conversations/${user._id}`);
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         navigate("/messages", { state: { conversation: data[0] } });

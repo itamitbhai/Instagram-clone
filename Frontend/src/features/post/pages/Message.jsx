@@ -4,7 +4,19 @@ import axios from "axios";
 import socket from "../../../socket";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { useLocation } from "react-router-dom";
+import { API_BASE_URL } from "../../../config";
 import "../style/message.scss";
+
+const getProfileImage = (profileImage) => {
+  if (!profileImage) return "https://i.pravatar.cc/40";
+  if (profileImage.startsWith("http://") || profileImage.startsWith("https://")) {
+    if (profileImage.includes("localhost:3000")) {
+      return profileImage.replace("http://localhost:3000", API_BASE_URL);
+    }
+    return profileImage;
+  }
+  return `${API_BASE_URL}/uploads/${profileImage}`;
+};
 
 const Message = () => {
   const { user } = useAuth();
@@ -61,7 +73,7 @@ const Message = () => {
   useEffect(() => {
     if (!userId) return;
     axios
-      .get(`http://localhost:3000/api/conversations/${userId}`)
+      .get(`${API_BASE_URL}/api/conversations/${userId}`)
       .then((res) => setConversations(res.data || []))
       .catch((err) => console.log("Conversation Error:", err));
   }, [userId]);
@@ -69,7 +81,7 @@ const Message = () => {
   useEffect(() => {
     if (!currentChat?._id) return;
     axios
-      .get(`http://localhost:3000/api/messages/${currentChat._id}`)
+      .get(`${API_BASE_URL}/api/messages/${currentChat._id}`)
       .then((res) => setMessages(res.data || []))
       .catch((err) => console.log("Message Fetch Error:", err));
   }, [currentChat]);
@@ -109,7 +121,7 @@ const Message = () => {
     };
 
     try {
-      const res = await axios.post("http://localhost:3000/api/messages", payload);
+      const res = await axios.post(`${API_BASE_URL}/api/messages`, payload);
       socket.emit("sendMessage", { ...payload, receiverId });
       setMessages((prev) => [...prev, res.data]);
       setNewMessage("");
@@ -121,13 +133,13 @@ const Message = () => {
   const deleteMessage = async (msgId, type = "me") => {
     try {
       if (type === "everyone") {
-        await axios.delete(`http://localhost:3000/api/messages/${msgId}`, {
+        await axios.delete(`${API_BASE_URL}/api/messages/${msgId}`, {
           withCredentials: true,
         });
         socket.emit("deleteMessage", { messageId: msgId });
       } else {
         await axios.put(
-          `http://localhost:3000/api/messages/delete-for-me/${msgId}`,
+          `${API_BASE_URL}/api/messages/delete-for-me/${msgId}`,
           { userId },
           { withCredentials: true }
         );
@@ -143,7 +155,7 @@ const Message = () => {
     if (!window.confirm("Delete entire chat?")) return;
     try {
       await axios.delete(
-        `http://localhost:3000/api/conversations/${currentChat._id}`,
+        `${API_BASE_URL}/api/conversations/${currentChat._id}`,
         { withCredentials: true }
       );
       setConversations((prev) => prev.filter((c) => c._id !== currentChat._id));
@@ -158,7 +170,7 @@ const Message = () => {
     if (!query.trim()) return setSearchResults([]);
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/users/search?q=${query}`,
+        `${API_BASE_URL}/api/users/search?q=${query}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
       setSearchResults(res.data.users || []);
@@ -170,7 +182,7 @@ const Message = () => {
   const startConversation = async (otherUserId) => {
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/conversations",
+        `${API_BASE_URL}/api/conversations`,
         { senderId: userId, receiverId: otherUserId },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -254,11 +266,7 @@ const Message = () => {
               className={`chatItem ${currentChat?._id === c._id ? "active" : ""}`}
             >
               <img
-                src={
-                  otherUser?.profileImage
-                    ? `http://localhost:3000/uploads/${otherUser.profileImage}`
-                    : "https://i.pravatar.cc/40"
-                }
+                src={getProfileImage(otherUser?.profileImage)}
                 alt=""
                 className="avatar"
               />
@@ -281,11 +289,7 @@ const Message = () => {
                 ←
               </button>
               <img
-                src={
-                  chatUser?.profileImage
-                    ? `http://localhost:3000/uploads/${chatUser.profileImage}`
-                    : "https://i.pravatar.cc/40"
-                }
+                src={getProfileImage(chatUser?.profileImage)}
                 alt=""
               />
               <span>{chatUser?.username || "User"}</span>

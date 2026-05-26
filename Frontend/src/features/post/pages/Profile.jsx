@@ -6,6 +6,8 @@ import "../style/profile.scss";
 import { getUserProfile } from "../services/post.api";
 import { followUser, unfollowUser, updateProfile } from "../../auth/services/auth.api";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { API_BASE_URL } from "../../../config";
+
 
 const Profile = () => {
     const { username } = useParams();
@@ -82,7 +84,7 @@ const Profile = () => {
 
         try {
             const res = await axios.post(
-                "http://localhost:3000/api/conversations",
+                `${API_BASE_URL}/api/conversations`,
                 { senderId, receiverId }
             );
 

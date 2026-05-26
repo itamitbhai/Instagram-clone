@@ -154,7 +154,7 @@ async function updateProfileController(req, res) {
         // 🔥 FILE HANDLE
         if (req.file) {
             updateData.profileImage =
-                "http://localhost:3000/uploads/" + req.file.filename
+                `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
         }
 
         const user = await userModel.findByIdAndUpdate(

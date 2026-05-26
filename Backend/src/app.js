@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: "https://instagram-clone-1-vlwm.onrender.com",
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
     credentials: true
 }));
 

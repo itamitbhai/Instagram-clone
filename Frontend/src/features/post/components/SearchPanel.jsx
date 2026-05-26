@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, X, Loader2 } from "lucide-react";
 import axios from "axios";
 import gsap from "gsap";
+import { API_BASE_URL } from "../../../config";
 import "../style/searchpanel.scss";
 
 const SearchPanel = ({ isOpen, onClose }) => {
@@ -45,7 +46,7 @@ const SearchPanel = ({ isOpen, onClose }) => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `http://localhost:3000/api/users/search?q=${query}`,
+          `${API_BASE_URL}/api/users/search?q=${query}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
