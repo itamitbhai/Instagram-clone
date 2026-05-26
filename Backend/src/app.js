@@ -6,10 +6,6 @@ const cors = require("cors")
 const app = express();
 app.use(express.json())
 app.use(cookieParser())
-// app.use(cors({
-//     credentials:true,
-//     origin: process.env.CORS_ORIGIN || "http://localhost:5173"
-// }))
 app.use(cors({
     origin: "https://instagram-clone-1-vlwm.onrender.com",
     credentials: true
