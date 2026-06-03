@@ -123,3 +123,18 @@
 .delete-option:hover {
     background: #262626;       /* ✅ dark hover */
 }
+
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid #262626;
+}
+
+.comment-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}

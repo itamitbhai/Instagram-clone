@@ -4,6 +4,7 @@ import {
 } from "../services/post.api"
 
 import { useContext, useRef } from "react"
+import { useAuth } from "../../auth/hooks/useAuth"
 import { PostContext } from "../post.context"
 import { io } from "socket.io-client"
 import { API_BASE_URL } from "../../../config"
@@ -11,8 +12,8 @@ import { API_BASE_URL } from "../../../config"
 const SOCKET_URL = API_BASE_URL
 let socketInstance = null
 
-export const usePost = (currentUser) => {
-    // currentUser = { _id, username } — parent se pass karo
+export const usePost = () => {
+    const { user: currentUser } = useAuth()
 
     const context = useContext(PostContext)
     const { loading, setLoading, post, setPost, feed, setFeed } = context
@@ -35,6 +36,7 @@ export const usePost = (currentUser) => {
             receiverId,
             senderId:       currentUser?._id,
             senderUsername: currentUser?.username,
+            senderProfileImage: currentUser?.profileImage || null,
             type,
             postId,
         })

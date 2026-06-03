@@ -215,6 +215,7 @@ input::placeholder {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 112px);
+    overflow-y: auto; /* Enable vertical scrolling */
   }
 
   .logo {
@@ -244,6 +245,13 @@ input::placeholder {
     span {
       display: none !important;  /* mobile mein text nahi */
     }
+
+    &.home-item { order: 1; }
+    &.search-item { order: 2; }
+    &.create-item { order: 3; }
+    &.reels-item { order: 4; }
+    &.messages-item { order: 5; }
+    &.profile-item { order: 6; }
   }
 
   /* Sirf mobile-show class wale dikhenge */

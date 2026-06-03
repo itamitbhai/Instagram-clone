@@ -4,19 +4,8 @@ import axios from "axios";
 import socket from "../../../socket";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { useLocation } from "react-router-dom";
-import { API_BASE_URL } from "../../../config";
+import { API_BASE_URL, getUserAvatar } from "../../../config";
 import "../style/message.scss";
-
-const getProfileImage = (profileImage) => {
-  if (!profileImage) return "https://i.pravatar.cc/40";
-  if (profileImage.startsWith("http://") || profileImage.startsWith("https://")) {
-    if (profileImage.includes("localhost:3000")) {
-      return profileImage.replace("http://localhost:3000", API_BASE_URL);
-    }
-    return profileImage;
-  }
-  return `${API_BASE_URL}/uploads/${profileImage}`;
-};
 
 const Message = () => {
   const { user } = useAuth();
@@ -242,7 +231,7 @@ const Message = () => {
                   onClick={() => startConversation(u._id)}
                 >
                   <img
-                    src={u.profileImage || "https://i.pravatar.cc/40"}
+                    src={getUserAvatar(u)}
                     alt=""
                     className="avatar"
                   />
@@ -266,7 +255,7 @@ const Message = () => {
               className={`chatItem ${currentChat?._id === c._id ? "active" : ""}`}
             >
               <img
-                src={getProfileImage(otherUser?.profileImage)}
+                src={getUserAvatar(otherUser)}
                 alt=""
                 className="avatar"
               />
@@ -289,7 +278,7 @@ const Message = () => {
                 ←
               </button>
               <img
-                src={getProfileImage(chatUser?.profileImage)}
+                src={getUserAvatar(chatUser)}
                 alt=""
               />
               <span>{chatUser?.username || "User"}</span>

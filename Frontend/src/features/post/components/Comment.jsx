@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { usePost } from "../hook/usePost.js"
+import { getUserAvatar } from "../../../config"
 import "../style/comment.scss"
 
 const Comment = ({ postId }) => {
@@ -56,9 +57,15 @@ const Comment = ({ postId }) => {
                 ) : (
                     comments.map((c) => (
                         <div key={c._id} className="comment">
-
-                            <span className="username">{c.user}</span>
-                            <span className="text">{c.text}</span>
+                            <img 
+                                src={getUserAvatar(c.profileImage || c.user)} 
+                                alt="" 
+                                className="comment-avatar" 
+                            />
+                            <div className="comment-info">
+                                <span className="username">{c.user}</span>
+                                <span className="text">{c.text}</span>
+                            </div>
 
                             {c.isOwner && (
                                 <div className="menu-wrapper" onClick={(e) => e.stopPropagation()}>

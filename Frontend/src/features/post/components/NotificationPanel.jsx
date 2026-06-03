@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { X, Heart, MessageCircle, UserPlus, HelpCircle } from "lucide-react";
 import gsap from "gsap";
 import { useNotification } from "../hook/useNotification";
+import { getUserAvatar } from "../../../config";
 import "../style/notificationpanel.scss";
 
 const getNotificationIcon = (type) => {
@@ -100,6 +101,11 @@ const NotificationPanel = ({ isOpen, onClose, userId }) => {
                   className={`notification-item-card ${n.isRead ? "read" : "unread"}`}
                 >
                   <div className="notif-avatar-wrapper">
+                    <img
+                      src={getUserAvatar(n.senderProfileImage || { username: n.senderUsername })}
+                      alt={n.senderUsername}
+                      className="notif-panel-avatar"
+                    />
                     <div className="notif-icon-badge">
                       {getNotificationIcon(n.type)}
                     </div>

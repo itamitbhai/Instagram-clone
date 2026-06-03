@@ -6,7 +6,7 @@ import "../style/profile.scss";
 import { getUserProfile } from "../services/post.api";
 import { followUser, unfollowUser, updateProfile } from "../../auth/services/auth.api";
 import { useAuth } from "../../auth/hooks/useAuth";
-import { API_BASE_URL } from "../../../config";
+import { API_BASE_URL, getUserAvatar } from "../../../config";
 
 
 const Profile = () => {
@@ -126,7 +126,7 @@ const Profile = () => {
             <div className="profile-header">
 
                 <img 
-                    src={data.user.profileImage} 
+                    src={getUserAvatar(data.user)} 
                     alt="profile"
                     className="profile-pic"
                 />
@@ -209,7 +209,7 @@ const Profile = () => {
                                 className="user-row"
                                 onClick={() => navigate(`/profile/${user.username}`)}
                             >
-                                <img src={user.profileImage} alt="" />
+                                <img src={getUserAvatar(user)} alt="" />
                                 <span>{user.username}</span>
                             </div>
                         ))}
@@ -229,7 +229,7 @@ const Profile = () => {
                                 className="user-row"
                                 onClick={() => navigate(`/profile/${user.username}`)}
                             >
-                                <img src={user.profileImage} alt="" />
+                                <img src={getUserAvatar(user)} alt="" />
                                 <span>{user.username}</span>
                             </div>
                         ))}

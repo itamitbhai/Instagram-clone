@@ -28,17 +28,18 @@ const socketHandler = (io) => {
 
     // ✅ NOTIFICATION — like, follow, comment
     socket.on("sendNotification", (data) => {
-      // data = { receiverId, senderId, senderUsername, type, postId? }
+      // data = { receiverId, senderId, senderUsername, senderProfileImage, type, postId? }
       const receiverSocket = onlineUsers[data.receiverId];
 
       if (receiverSocket) {
         io.to(receiverSocket).emit("getNotification", {
-          senderId:       data.senderId,
-          senderUsername: data.senderUsername,
-          type:           data.type,       // "like" | "follow" | "comment" | "message"
-          postId:         data.postId || null,
-          createdAt:      new Date(),
-          isRead:         false,
+          senderId:           data.senderId,
+          senderUsername:     data.senderUsername,
+          senderProfileImage: data.senderProfileImage || null,
+          type:               data.type,       // "like" | "follow" | "comment" | "message"
+          postId:             data.postId || null,
+          createdAt:          new Date(),
+          isRead:             false,
         });
       }
     });

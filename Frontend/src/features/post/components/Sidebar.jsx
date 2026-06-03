@@ -34,13 +34,14 @@ const Sidebar = ({ isSearchOpen, toggleSearch, isNotificationOpen, toggleNotific
       <div className="logo">Insta</div>
 
       <div className="nav-links">
-        <NavItem icon={<Home />} text="Home" active={location.pathname === "/"} onClick={() => navigate("/")} className="mobile-show" />
-        <NavItem icon={<Search />} text="Search" active={isSearchOpen} onClick={toggleSearch} className="mobile-show" />
-        <NavItem icon={<Compass />} text="Explore" />
-        <NavItem icon={<PlayCircle />} text="Reels" className="mobile-show" />
-        <NavItem icon={<MessageCircle />} text="Messages" active={location.pathname === "/messages"} onClick={handleMessages} className="mobile-show" />
+        <NavItem icon={<Home />} text="Home" active={location.pathname === "/"} onClick={() => navigate("/")} className="mobile-show home-item" />
+        <NavItem icon={<Search />} text="Search" active={isSearchOpen} onClick={toggleSearch} className="mobile-show search-item" />
+        <NavItem icon={<Compass />} text="Explore" className="explore-item" />
+        <NavItem icon={<PlusSquare />} text="Create" active={location.pathname === "/create-post"} onClick={() => navigate("/create-post")} className="mobile-show create-item" />
+        <NavItem icon={<PlayCircle />} text="Reels" active={location.pathname === "/reels"} onClick={() => navigate("/reels")} className="mobile-show reels-item" />
+        <NavItem icon={<MessageCircle />} text="Messages" active={location.pathname === "/messages"} onClick={handleMessages} className="mobile-show messages-item" />
 
-        {/* Notifications — desktop and mobile */}
+        {/* Notifications — desktop only, hidden on mobile bottom nav */}
         <NavItem 
           icon={
             <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
@@ -55,10 +56,8 @@ const Sidebar = ({ isSearchOpen, toggleSearch, isNotificationOpen, toggleNotific
           text="Notifications" 
           active={isNotificationOpen}
           onClick={toggleNotifications}
-          className="mobile-show"
+          className="notifications-item"
         />
-
-        <NavItem icon={<PlusSquare />} text="Create" onClick={() => navigate("/create-post")} />
 
         {/* Profile — sabse neeche, mobile mein bhi show */}
         <NavItem

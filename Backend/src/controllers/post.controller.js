@@ -332,8 +332,17 @@ async function getCommentsController(req, res) {
             post: postId
         }).sort({ createdAt: -1 })
 
+        // Get all unique usernames from comments and look up their profileImage
+        const usernames = [...new Set(comments.map(c => c.user))];
+        const users = await userModel.find({ username: { $in: usernames } }).select("username profileImage");
+        const userMap = {};
+        users.forEach(u => {
+            userMap[u.username] = u.profileImage;
+        });
+
         const updatedComments = comments.map(c => ({
             ...c.toObject(),
+            profileImage: userMap[c.user] || "https://ik.imagekit.io/nruucogyj/images.jpeg",
             isOwner: c.user === username
         }))
 

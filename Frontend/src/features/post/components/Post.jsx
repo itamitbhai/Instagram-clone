@@ -4,6 +4,7 @@ import "../style/post.scss"
 import DeletePost from "../pages/DeletePost"
 import Comments from "../components/Comment"
 import { useNavigate } from "react-router-dom"
+import { getUserAvatar } from "../../../config"
 
 const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
     const postRef = useRef(null);
@@ -77,12 +78,8 @@ const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
                     }}
                 >
                     <img 
-                        src={user?.profileImage || "https://ik.imagekit.io/nruucogyj/images.jpeg"} 
+                        src={getUserAvatar(user)} 
                         alt="" 
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "https://ik.imagekit.io/nruucogyj/images.jpeg";
-                        }}
                     />
                 </div>
 

@@ -18,7 +18,11 @@ const server = http.createServer(app);
 // ✅ socket setup
 const io = new Server(server, {
   cors: {
-    origin:"https://instagram-clone-4q13.onrender.com",
+      origin: [
+    "http://localhost:5173",                        // local dev
+    "https://instagram-clone-4q13.onrender.com"     // production
+  ],
+  methods: ["GET", "POST"],
     credentials: true
   }
 });

@@ -7,6 +7,7 @@ import CreatePost from "./features/post/pages/CreatePost";
 import MainLayout from "./features/post/layouts/MainLayout";
 import Profile from "./features/post/pages/Profile";
 import Message from "./features/post/pages/Message";
+import Reels from "./features/post/pages/Reels";
 
 import ProtectedRoute from "./features/auth/components/ProtectedRoute";
 import PublicRoute from "./features/auth/components/PublicRoute";
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
           {
             path: "/messages",
             element: <Message />,
+          },
+          {
+            path: "/reels",
+            element: <Reels />,
           },
         ],
       },

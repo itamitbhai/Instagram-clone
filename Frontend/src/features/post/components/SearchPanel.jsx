@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, X, Loader2 } from "lucide-react";
 import axios from "axios";
 import gsap from "gsap";
-import { API_BASE_URL } from "../../../config";
+import { API_BASE_URL, getUserAvatar } from "../../../config";
 import "../style/searchpanel.scss";
 
 const SearchPanel = ({ isOpen, onClose }) => {
@@ -115,13 +115,9 @@ const SearchPanel = ({ isOpen, onClose }) => {
                 onClick={() => handleUserClick(user.username)}
               >
                 <img
-                  src={user.profileImage || "https://ik.imagekit.io/nruucogyj/images.jpeg"}
+                  src={getUserAvatar(user)}
                   alt={user.username}
                   className="result-avatar"
-                  onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "https://ik.imagekit.io/nruucogyj/images.jpeg";
-                  }}
                 />
                 <div className="result-info">
                   <span className="result-username">{user.username}</span>

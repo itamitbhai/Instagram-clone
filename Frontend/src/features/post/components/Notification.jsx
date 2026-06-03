@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { useNotification } from "../hook/useNotification"
+import { getUserAvatar } from "../../../config"
 import "../style/notification.scss"
 
 const getNotificationText = (n) => {
@@ -74,8 +75,15 @@ const Notification = ({ userId }) => {
             <ul>
               {notifications.map((n, i) => (
                 <li key={i} className={`notif-item ${n.isRead ? "read" : "unread"}`}>
-                  <span className="notif-text">{getNotificationText(n)}</span>
-                  <span className="notif-time">{timeAgo(n.createdAt)}</span>
+                  <img 
+                    src={getUserAvatar(n.senderProfileImage || { username: n.senderUsername })} 
+                    alt={n.senderUsername} 
+                    className="notif-avatar" 
+                  />
+                  <div className="notif-info">
+                    <span className="notif-text">{getNotificationText(n)}</span>
+                    <span className="notif-time">{timeAgo(n.createdAt)}</span>
+                  </div>
                   <button className="notif-close" onClick={() => removeNotification(i)}>✕</button>
                 </li>
               ))}

@@ -1,0 +1,585 @@
+// ─────────────────────────────────────────────────────────────────
+//  STORIES PREMIUM DARK STYLE
+// ─────────────────────────────────────────────────────────────────
+
+$ig-blue: #0095f6;
+$ig-black: #09090b;
+$ig-white: #fafafa;
+$border-soft: rgba(255, 255, 255, 0.08);
+$card-bg: #18181b;
+
+$story-gradient: linear-gradient(
+  45deg,
+  #feda75,
+  #fa7e1e,
+  #d62976,
+  #962fbf,
+  #4f5bd5
+);
+
+$overlay: rgba(0, 0, 0, 0.95);
+$avatar-size: 68px;
+$viewer-width: 430px;
+
+@mixin center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin circle($size) {
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+}
+
+@mixin skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes storyOpen {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// STORIES BAR
+// ─────────────────────────────────────────────────────
+
+.stories-bar {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 16px 20px;
+  margin: 15px;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  border: 1px solid $border-soft;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    margin: 10px 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    background: transparent;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+  }
+}
+
+.story-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    
+    .story-ring {
+      box-shadow: 0 0 15px rgba(250, 126, 30, 0.35);
+    }
+  }
+}
+
+.story-ring {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  padding: 2.5px;
+  background: $story-gradient;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  &--viewed {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  &--add {
+    background: rgba(255, 255, 255, 0.08);
+    position: relative;
+  }
+
+  &--skeleton {
+    @include skeleton;
+    border: none;
+  }
+}
+
+.story-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #0c0c0e; // dark separation line
+}
+
+// ── Add Icon ─────────────────────────────────────────
+.story-add-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  @include circle(20px);
+  @include center;
+  background: $ig-blue;
+  color: white;
+  border: 2px solid #0c0c0e;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+// ── Username ─────────────────────────────────────────
+.story-username {
+  max-width: 74px;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #d4d4d8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+
+  &--skeleton {
+    width: 50px;
+    height: 10px;
+    border-radius: 4px;
+    @include skeleton;
+  }
+}
+
+.stories-empty {
+  font-size: 13px;
+  color: #71717a;
+  align-self: center;
+  width: 100%;
+  text-align: center;
+  font-weight: 500;
+}
+
+// ─────────────────────────────────────────────────────
+// STORY VIEWER
+// ─────────────────────────────────────────────────────
+
+.story-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: $overlay;
+  backdrop-filter: blur(25px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.25s ease;
+}
+
+// ── Viewer ───────────────────────────────────────────
+.story-viewer {
+  position: relative;
+  width: 420px;
+  height: 85vh;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #000;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px $border-soft;
+  animation: storyOpen 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// PROGRESS BARS
+// ─────────────────────────────────────────────────────
+
+.story-progress-bars {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  gap: 5px;
+  z-index: 100;
+}
+
+.story-progress-track {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.story-progress-fill {
+  height: 100%;
+  background: white;
+  border-radius: inherit;
+  transition: width 0.05s linear;
+}
+
+// ─────────────────────────────────────────────────────
+// HEADER
+// ─────────────────────────────────────────────────────
+
+.story-header {
+  position: absolute;
+  top: 24px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 30;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.story-header-avatar {
+  @include circle(36px);
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.story-header-name {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.story-header-time {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+// ── Close Button ─────────────────────────────────────
+.story-close-btn {
+  margin-left: auto;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// STORY IMAGE
+// ─────────────────────────────────────────────────────
+
+.story-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s ease;
+}
+
+.story-img-loader {
+  position: absolute;
+  inset: 0;
+  @include skeleton;
+  z-index: 1;
+}
+
+// ─────────────────────────────────────────────────────
+// CAPTION
+// ─────────────────────────────────────────────────────
+
+.story-caption {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 64px;
+  padding: 12px 16px;
+  color: white;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 13.5px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+// ─────────────────────────────────────────────────────
+// COUNTER
+// ─────────────────────────────────────────────────────
+
+.story-counter {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: 500;
+  z-index: 30;
+}
+
+// ─────────────────────────────────────────────────────
+// TAP AREAS
+// ─────────────────────────────────────────────────────
+
+.story-tap-prev,
+.story-tap-next {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 35%;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.story-tap-prev { left: 0; }
+.story-tap-next { right: 0; }
+
+// ─────────────────────────────────────────────────────
+// UPLOAD MODAL
+// ─────────────────────────────────────────────────────
+
+.story-upload-modal {
+  width: 440px;
+  background: $card-bg;
+  border: 1px solid $border-soft;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  @media (max-width: 768px) {
+    width: calc(100% - 32px);
+    padding: 20px;
+    border-radius: 16px;
+  }
+}
+
+// ── Title ────────────────────────────────────────────
+.story-upload-title {
+  margin: 0;
+  text-align: center;
+  font-size: 19px;
+  font-weight: 700;
+  color: #ffffff !important;
+  letter-spacing: -0.02em;
+}
+
+// ── Upload Zone ──────────────────────────────────────
+.story-upload-zone {
+  padding: 44px 20px;
+  border-radius: 16px;
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  color: #fafafa !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    border-color: $ig-blue;
+    background: rgba(0, 149, 246, 0.04);
+    transform: translateY(-2px);
+  }
+}
+
+.story-upload-icon {
+  font-size: 38px;
+}
+
+.story-upload-hint {
+  font-size: 12.5px;
+  color: #a1a1aa !important;
+}
+
+// ── Preview ──────────────────────────────────────────
+.story-upload-preview-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.story-upload-preview {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
+.story-upload-change {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.65);
+  color: white;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.85);
+    transform: scale(1.03);
+  }
+}
+
+// ── Input ────────────────────────────────────────────
+.story-caption-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2) !important;
+  color: #ffffff !important;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: $ig-blue;
+  }
+}
+
+// ── Counter ──────────────────────────────────────────
+.story-caption-count {
+  margin-top: -12px;
+  text-align: right;
+  font-size: 11px;
+  color: #71717a !important;
+}
+
+// ─────────────────────────────────────────────────────
+// PROGRESS
+// ─────────────────────────────────────────────────────
+
+.story-upload-progress-track {
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.story-upload-progress-fill {
+  height: 100%;
+  background: $ig-blue;
+  transition: width 0.18s ease;
+}
+
+// ─────────────────────────────────────────────────────
+// ERROR
+// ─────────────────────────────────────────────────────
+
+.story-error {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  font-size: 12.5px;
+  text-align: center;
+  font-weight: 500;
+}
+
+// ─────────────────────────────────────────────────────
+// BUTTONS
+// ─────────────────────────────────────────────────────
+
+.story-upload-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.story-btn {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.story-btn--cancel {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff !important;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
+
+.story-btn--submit {
+  background: $ig-blue;
+  color: white;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 149, 246, 0.3);
+  }
+}
