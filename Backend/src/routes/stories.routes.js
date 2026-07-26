@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 const Story = require("../models/Story.model");
 const authMiddleware = require("../middleware/auth.middleware"); // tumhara existing auth middleware
 
@@ -12,26 +13,29 @@ const storage = multer.diskStorage({
     cb(null, `story_${Date.now()}${path.extname(file.originalname)}`),
 });
 
+const ALLOWED_IMAGE_EXT = /jpeg|jpg|png|webp/;
+const ALLOWED_VIDEO_EXT = /mp4|mov|webm|quicktime/;
+
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+  limits: { fileSize: 30 * 1024 * 1024 }, // 30MB max (video needs more room than photos)
   fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|webp/;
-    const ok =
-      allowed.test(path.extname(file.originalname).toLowerCase()) &&
-      allowed.test(file.mimetype);
-    ok ? cb(null, true) : cb(new Error("Sirf images allowed hain!"));
+    const ext = path.extname(file.originalname).toLowerCase();
+    const isImage = ALLOWED_IMAGE_EXT.test(ext) && file.mimetype.startsWith("image/");
+    const isVideo = ALLOWED_VIDEO_EXT.test(ext) && file.mimetype.startsWith("video/");
+    (isImage || isVideo) ? cb(null, true) : cb(new Error("Sirf image (jpg/png/webp) ya video (mp4/mov/webm) allowed hain!"));
   },
 });
 
 // ── POST /api/stories — story upload karo ──────────────────────
-router.post("/", authMiddleware, upload.single("image"), async (req, res) => {
+router.post("/", authMiddleware, upload.single("media"), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ message: "Image required hai" });
+    if (!req.file) return res.status(400).json({ message: "Photo ya video required hai" });
 
     const story = await Story.create({
       user: req.user.id,
-      image: `/uploads/stories/${req.file.filename}`,
+      media: `/uploads/stories/${req.file.filename}`,
+      mediaType: req.file.mimetype.startsWith("video/") ? "video" : "image",
       caption: req.body.caption || "",
     });
 
@@ -121,6 +125,13 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     if (!story) return res.status(404).json({ message: "Story nahi mili" });
     if (story.user.toString() !== req.user.id)
       return res.status(403).json({ message: "Ye teri story nahi hai" });
+
+    if (story.media) {
+      const filePath = path.join(__dirname, "..", "..", story.media);
+      fs.unlink(filePath, (err) => {
+        if (err && err.code !== "ENOENT") console.error("Story file delete failed:", filePath, err.message);
+      });
+    }
 
     await story.deleteOne();
     res.json({ message: "Story delete ho gayi" });

@@ -5,6 +5,7 @@ import DeletePost from "../pages/DeletePost"
 import Comments from "../components/Comment"
 import { useNavigate } from "react-router-dom"
 import { getUserAvatar } from "../../../config"
+import { useModalEnter } from "../../shared/hooks/useModalEnter"
 
 const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
     const postRef = useRef(null);
@@ -12,6 +13,7 @@ const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
     const [showComments, setShowComments] = useState(false)
     const [animate, setAnimate]           = useState(false)
     const [isLiked, setIsLiked]           = useState(post?.isLiked ?? false)
+    const deletePopupRef = useModalEnter([showDelete])
 
     useEffect(() => {
         setIsLiked(post?.isLiked ?? false)
@@ -60,7 +62,7 @@ const Post = ({ user, post, handleLike, handleUnLike, handleDeletePost }) => {
         <div ref={postRef} className="post" onClick={handlePostClick}>
 
             {showDelete && (
-                <div className="deletePopup" onClick={(e) => e.stopPropagation()}>
+                <div ref={deletePopupRef} className="deletePopup" onClick={(e) => e.stopPropagation()}>
                     <DeletePost
                         postId={post._id}
                         handleDeletePost={handleDeletePost}

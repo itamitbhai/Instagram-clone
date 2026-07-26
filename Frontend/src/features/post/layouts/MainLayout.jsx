@@ -4,13 +4,17 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SearchPanel from "../components/SearchPanel";
 import NotificationPanel from "../components/NotificationPanel";
+import PageTransition from "../../shared/components/PageTransition";
+import { useLenis } from "../../shared/hooks/useLenis";
 import { useAuth } from "../../auth/hooks/useAuth";
-import "../style/layout.scss"; 
+import "../style/layout.scss";
 
 const MainLayout = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const { user } = useAuth();
+
+  useLenis();
 
   const handleToggleSearch = () => {
     setIsSearchOpen(prev => !prev);
@@ -42,7 +46,9 @@ const MainLayout = () => {
       />
 
       <div className="mainContent">
-        <Outlet />
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
       </div>
 
     </div>

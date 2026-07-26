@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import { getUserAvatar } from "../../../config";
+import { useModalEnter } from "../../shared/hooks/useModalEnter";
 import "../style/Stories.scss";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -15,7 +16,7 @@ const getAuthConfig = () => {
   };
 };
 
-const imgUrl = (path) => {
+const mediaUrl = (path) => {
   if (!path) return "/default-avatar.png";
   if (path.startsWith("http")) return path;
   return `${API}${path}`;
@@ -127,12 +128,15 @@ function StoryViewer({ group, currentUserId, onClose }) {
   const [progress, setProgress] = useState(0);
   const [paused, setPaused] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [muted, setMuted] = useState(true);
   const intervalRef = useRef(null);
+  const videoRef = useRef(null);
   const DURATION = 5000;
   const TICK = 50;
 
   const stories = group.stories;
   const current = stories[storyIndex];
+  const isVideo = current?.mediaType === "video";
 
   // Mark as viewed
   useEffect(() => {
@@ -153,9 +157,17 @@ function StoryViewer({ group, currentUserId, onClose }) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [storyIndex]);
 
-  // Progress timer — sirf tab chale jab image load ho gayi ho
+  // Play/pause the actual <video> element when the user long-presses to pause
   useEffect(() => {
-    if (paused || !imgLoaded) return;
+    if (!isVideo || !videoRef.current) return;
+    if (paused) videoRef.current.pause();
+    else videoRef.current.play().catch(() => {});
+  }, [paused, isVideo, storyIndex]);
+
+  // Progress timer for IMAGE stories only — video stories drive their own
+  // progress off the <video> element's onTimeUpdate/onEnded events instead.
+  useEffect(() => {
+    if (isVideo || paused || !imgLoaded) return;
     setProgress(0);
 
     intervalRef.current = setInterval(() => {
@@ -170,7 +182,7 @@ function StoryViewer({ group, currentUserId, onClose }) {
     }, TICK);
 
     return () => clearInterval(intervalRef.current);
-  }, [storyIndex, paused, imgLoaded]);
+  }, [storyIndex, paused, imgLoaded, isVideo]);
 
   const goNext = useCallback(() => {
     if (storyIndex < stories.length - 1) {
@@ -224,24 +236,51 @@ function StoryViewer({ group, currentUserId, onClose }) {
             alt={group.user.username}
             className="story-header-avatar"
           />
-          <div>
+          <div className="story-header-info">
             <span className="story-header-name">{group.user.username}</span>
             <span className="story-header-time">{timeAgo(current.createdAt)}</span>
           </div>
+          {isVideo && (
+            <button
+              className="story-mute-btn"
+              onClick={(e) => { e.stopPropagation(); setMuted((m) => !m); }}
+            >
+              {muted ? "🔇" : "🔊"}
+            </button>
+          )}
           <button className="story-close-btn" onClick={onClose}>✕</button>
         </div>
 
-        {/* Image loader */}
+        {/* Media loader */}
         {!imgLoaded && <div className="story-img-loader" />}
 
-        {/* Story image */}
-        <img
-          src={imgUrl(current.image)}
-          alt="story"
-          className="story-image"
-          onLoad={() => setImgLoaded(true)}
-          style={{ opacity: imgLoaded ? 1 : 0 }}
-        />
+        {/* Story media */}
+        {isVideo ? (
+          <video
+            key={current._id}
+            ref={videoRef}
+            src={mediaUrl(current.media)}
+            className="story-image"
+            autoPlay
+            muted={muted}
+            playsInline
+            onLoadedData={() => setImgLoaded(true)}
+            onTimeUpdate={(e) => {
+              const { currentTime, duration } = e.currentTarget;
+              if (duration) setProgress((currentTime / duration) * 100);
+            }}
+            onEnded={goNext}
+            style={{ opacity: imgLoaded ? 1 : 0 }}
+          />
+        ) : (
+          <img
+            src={mediaUrl(current.media)}
+            alt="story"
+            className="story-image"
+            onLoad={() => setImgLoaded(true)}
+            style={{ opacity: imgLoaded ? 1 : 0 }}
+          />
+        )}
 
         {/* Caption */}
         {current.caption && (
@@ -265,19 +304,22 @@ function StoryViewer({ group, currentUserId, onClose }) {
 function StoryUpload({ onClose, onUploaded }) {
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
+  const [isVideoFile, setIsVideoFile] = useState(false);
   const [caption, setCaption] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const popupRef = useModalEnter([]);
 
   const handleFile = (e) => {
     const f = e.target.files[0];
     if (!f) return;
-    if (f.size > 10 * 1024 * 1024) {
-      setError("File 10MB se badi hai!");
+    if (f.size > 30 * 1024 * 1024) {
+      setError("File 30MB se badi hai!");
       return;
     }
     setFile(f);
+    setIsVideoFile(f.type.startsWith("video/"));
     setError("");
     setPreview(URL.createObjectURL(f));
   };
@@ -290,16 +332,16 @@ function StoryUpload({ onClose, onUploaded }) {
   };
 
   const handleSubmit = async () => {
-    if (!file) return setError("Pehle image select karo");
+    if (!file) return setError("Pehle photo ya video select karo");
     setLoading(true);
     setError("");
     setUploadProgress(0);
     try {
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("media", file);
       formData.append("caption", caption);
       await axios.post(`${API}/api/stories`, formData, {
-        headers: { 
+        headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`
         },
@@ -317,14 +359,18 @@ function StoryUpload({ onClose, onUploaded }) {
   };
 
   return (
-    <div className="story-viewer-overlay" onClick={onClose}>
-      <div className="story-upload-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="story-upload-overlay" onClick={onClose}>
+      <div ref={popupRef} className="story-upload-modal" onClick={(e) => e.stopPropagation()}>
         <h3 className="story-upload-title">New Story</h3>
 
         {preview ? (
           <div className="story-upload-preview-wrap">
-            <img src={preview} alt="preview" className="story-upload-preview" />
-            <button className="story-upload-change" onClick={() => { setPreview(null); setFile(null); setUploadProgress(0); }}>
+            {isVideoFile ? (
+              <video src={preview} className="story-upload-preview" controls muted />
+            ) : (
+              <img src={preview} alt="preview" className="story-upload-preview" />
+            )}
+            <button className="story-upload-change" onClick={() => { setPreview(null); setFile(null); setIsVideoFile(false); setUploadProgress(0); }}>
               change
             </button>
           </div>
@@ -334,10 +380,10 @@ function StoryUpload({ onClose, onUploaded }) {
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
           >
-            <input type="file" accept="image/*" onChange={handleFile} style={{ display: "none" }} />
+            <input type="file" accept="image/*,video/*" onChange={handleFile} style={{ display: "none" }} />
             <span className="story-upload-icon">📷</span>
-            <span>Photo choose karo or drag & drop </span>
-            <span className="story-upload-hint">JPG, PNG, WEBP • Max 10MB</span>
+            <span>Photo ya video choose karo</span>
+            <span className="story-upload-hint">JPG, PNG, WEBP, MP4, MOV • Max 30MB</span>
           </label>
         )}
 

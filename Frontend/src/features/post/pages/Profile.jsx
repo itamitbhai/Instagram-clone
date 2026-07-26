@@ -7,6 +7,8 @@ import { getUserProfile } from "../services/post.api";
 import { followUser, unfollowUser, updateProfile } from "../../auth/services/auth.api";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { API_BASE_URL, getUserAvatar } from "../../../config";
+import { ProfileSkeleton } from "../../shared/components/Skeleton";
+import { useModalEnter } from "../../shared/hooks/useModalEnter";
 
 
 const Profile = () => {
@@ -25,20 +27,28 @@ const Profile = () => {
     const [bio, setBio] = useState("");
     const [image, setImage] = useState("");
 
+    const followersModalRef = useModalEnter([showFollowers]);
+    const followingModalRef = useModalEnter([showFollowing]);
+    const editModalRef = useModalEnter([showEdit]);
+    const imageModalRef = useModalEnter([selectedPost]);
+
     //  LOAD PROFILE
     useEffect(() => {
+        setData(null);
         loadProfile();
     }, [username]);
 
-    async function loadProfile() {
+    // `silent` = refresh data in place without blanking the whole page
+    // (used after follow/unfollow and after saving an edit)
+    async function loadProfile(silent = false) {
         try {
-            setLoading(true);
+            if (!silent) setLoading(true);
             const res = await getUserProfile(username);
             setData(res);
         } catch (err) {
             console.log(err);
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     }
 
@@ -60,7 +70,7 @@ const Profile = () => {
             } else {
                 await followUser(username);
             }
-            await loadProfile();
+            await loadProfile(true);
         } catch (err) {
             console.log(err);
         }
@@ -108,7 +118,7 @@ const Profile = () => {
             }
 
             await updateProfile(formData);
-            await loadProfile();
+            await loadProfile(true);
             setShowEdit(false);
 
         } catch (err) {
@@ -116,7 +126,7 @@ const Profile = () => {
         }
     }
 
-    if (loading) return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
+    if (loading && !data) return <ProfileSkeleton />;
     if (!data) return <h2>User not found</h2>;
 
     return (
@@ -200,7 +210,7 @@ const Profile = () => {
             {/* FOLLOWERS */}
             {showFollowers && (
                 <div className="modal" onClick={() => setShowFollowers(false)}>
-                    <div className="modal-box" onClick={(e)=>e.stopPropagation()}>
+                    <div ref={followersModalRef} className="modal-box" onClick={(e)=>e.stopPropagation()}>
                         <h3>Followers</h3>
 
                         {data.followersList.map(user => (
@@ -220,7 +230,7 @@ const Profile = () => {
             {/* FOLLOWING */}
             {showFollowing && (
                 <div className="modal" onClick={() => setShowFollowing(false)}>
-                    <div className="modal-box" onClick={(e)=>e.stopPropagation()}>
+                    <div ref={followingModalRef} className="modal-box" onClick={(e)=>e.stopPropagation()}>
                         <h3>Following</h3>
 
                         {data.followingList.map(user => (
@@ -240,7 +250,7 @@ const Profile = () => {
             {/* EDIT PROFILE MODAL */}
            {showEdit && (
   <div className="modal" onClick={() => setShowEdit(false)}>
-    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+    <div ref={editModalRef} className="modal-box" onClick={(e) => e.stopPropagation()}>
 
       <h2>Edit Profile</h2>
 
@@ -280,8 +290,9 @@ const Profile = () => {
                className="modal" 
                onClick={() => setSelectedPost(null)}
              >
-               <div 
-                 className="imageModal" 
+               <div
+                 ref={imageModalRef}
+                 className="imageModal"
                  onClick={(e) => e.stopPropagation()}
                >
                  <img src={selectedPost.imgUrl} alt="preview" />

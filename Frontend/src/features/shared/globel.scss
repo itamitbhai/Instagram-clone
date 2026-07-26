@@ -21,3 +21,27 @@ a{
     color:#d20c3d;
     text-decoration: none;
 }
+
+.meetupx-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1;
+
+    svg {
+        flex-shrink: 0;
+    }
+
+}
+
+.meetupx-logo .meetupx-logo__text {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #a06bff, #47bfff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent !important;
+    white-space: nowrap;
+}

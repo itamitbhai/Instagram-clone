@@ -7,6 +7,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useNotification } from "../hook/useNotification";
 import { API_BASE_URL } from "../../../config";
+import Logo from "../../shared/components/Logo";
 import "../style/sidebar.scss";
 
 const Sidebar = ({ isSearchOpen, toggleSearch, isNotificationOpen, toggleNotifications }) => {
@@ -31,7 +32,7 @@ const Sidebar = ({ isSearchOpen, toggleSearch, isNotificationOpen, toggleNotific
 
   return (
     <div className="sidebar">
-      <div className="logo">Insta</div>
+      <div className="logo"><Logo size={26} /></div>
 
       <div className="nav-links">
         <NavItem icon={<Home />} text="Home" active={location.pathname === "/"} onClick={() => navigate("/")} className="mobile-show home-item" />

@@ -7,9 +7,14 @@ const StorySchema = new mongoose.Schema(
       ref: "users",
       required: true,
     },
-    image: {
-      type: String, // Cloudinary URL ya local path
+    media: {
+      type: String, // local path to the image or video
       required: true,
+    },
+    mediaType: {
+      type: String,
+      enum: ["image", "video"],
+      default: "image",
     },
     caption: {
       type: String,
@@ -25,12 +30,10 @@ const StorySchema = new mongoose.Schema(
     expiresAt: {
       type: Date,
       default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      index: true, // queried on every feed fetch (expiresAt > now) and by the cleanup job
     },
   },
   { timestamps: true }
 );
-
-// Auto-delete index — MongoDB TTL index
-StorySchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("Story", StorySchema);

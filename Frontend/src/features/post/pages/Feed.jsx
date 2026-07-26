@@ -5,23 +5,27 @@ import { usePost } from '../hook/usePost'
 import { useAuth } from '../../auth/hooks/useAuth'
 import { useNavigate } from 'react-router'
 import { StoriesBar } from '../components/Stories'  // ← ADD
+import { FeedSkeleton } from '../../shared/components/Skeleton'
 
 const Feed = () => {
   const navigate = useNavigate();
   const { user: currentUser, checkedAuth } = useAuth()
   const {feed, handleGetFeed, loading, handleLike, handleUnLike, handleDeletePost} = usePost(currentUser)
-  
+
   useEffect(() => {
     if(!checkedAuth) return
     if (!currentUser) {
       navigate("/login");
       return;
     }
+    // feed already loaded (e.g. context kept it from before) — no need to
+    // re-fetch and blank the page out again
+    if (feed) return
     handleGetFeed()
   }, [currentUser, checkedAuth])
 
-  if(!checkedAuth || loading || !feed){
-    return (<main><h1>Feed is Loading....</h1></main>)
+  if (!checkedAuth || !feed) {
+    return (<main className='feed-page'><FeedSkeleton /></main>)
   }
 
   return (
