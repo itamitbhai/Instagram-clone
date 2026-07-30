@@ -26,7 +26,8 @@ const io = new Server(server, {
       "http://127.0.0.1:5174",
       "http://localhost:5175",
       "http://127.0.0.1:5175",
-      "https://instagram-clone-4q13.onrender.com"
+      "https://instagram-clone-4q13.onrender.com",
+      "https://deepocean1.onrender.com"
     ],
     methods: ["GET", "POST"],
     credentials: true
